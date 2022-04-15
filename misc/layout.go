@@ -23,3 +23,7 @@ func MenuInicial() int {
 func Limpatela() {
 	fmt.Println("\033[2J")
 }
+
+func PulaLinha() {
+	fmt.Print("\n\n")
+}

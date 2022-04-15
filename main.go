@@ -23,8 +23,10 @@ func main() {
 			tempId := ""
 			fmt.Print("INFORME O ID DA MOEDA: ")
 			fmt.Scan(&tempId)
-			indice, obj := mc.EditarCriptoMoeda(tempId, moedas)
-			moedas[indice] = *obj
+			indice, obj, found := mc.EditarCriptoMoeda(tempId, moedas)
+			if found {
+				moedas[indice] = *obj
+			}
 		case 3:
 			misc.Limpatela()
 
@@ -45,15 +47,41 @@ func main() {
 				misc.Limpatela()
 			}
 		case 4:
+			tempID := ""
 			mc := model.MoedaCripto{}
-			mc.UpVote(mc.Id)
+
+			fmt.Print("INFORME O ID DA MOEDA: ")
+			fmt.Scan(&tempID)
+
+			voteup, found, indice := mc.UpVote(tempID, moedas)
+			if found {
+				misc.Limpatela()
+				moedas[indice].Votos = voteup
+				fmt.Print("VOTO REGISTRADO!\n")
+				fmt.Println("MOEDA: ", moedas[indice].Nome)
+				fmt.Println("VOTOS: ", moedas[indice].Votos)
+				fmt.Scan(&pause)
+			}
+
 		case 5:
+			tempId := ""
+			fmt.Print("INFORME O ID DA MOEDA: ")
+			fmt.Scan(&tempId)
+
 			mc := model.MoedaCripto{}
-			mc.DownVote(mc.Id)
+			votedown, found, indice := mc.DownVote(tempId, moedas)
+			if found {
+				misc.Limpatela()
+				moedas[indice].Votos = votedown
+				fmt.Println("VOTO REGISTRADO!")
+				fmt.Println("MOEDA: ", moedas[indice].Nome)
+				fmt.Println("VOTOS: ", moedas[indice].Votos)
+				fmt.Scan(&pause)
+			}
 		case 6:
 			misc.Limpatela()
-			//mc :=model.MoedaCripto{}
-			fmt.Print(moedas)
+			mc := model.MoedaCripto{}
+			mc.ListarCriptoMoedas(moedas)
 			fmt.Scan(&pause)
 			misc.Limpatela()
 		case 0:
