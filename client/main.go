@@ -1,8 +1,8 @@
 package main
 
 import (
-	"DesafioTecnico/misc"
-	"DesafioTecnico/model"
+	"DesafioTecnico/client/misc"
+	"DesafioTecnico/server/model"
 	"fmt"
 )
 

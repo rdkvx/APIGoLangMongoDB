@@ -1,7 +1,7 @@
 package model
 
 import (
-	"DesafioTecnico/misc"
+	"DesafioTecnico/client/misc"
 	"fmt"
 
 	"github.com/google/uuid"
