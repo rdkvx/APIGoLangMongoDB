@@ -3,16 +3,22 @@ package model
 import (
 	"DesafioTecnico/client/misc"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 type MoedaCripto struct {
-	Id      string `json:"id" bson:"id"`
-	Nome    string `json:"nome" bson:"nome"`
-	Simbolo string `json:"simbolo" bson:"simbolo"`
-	Votos   int    `json:"votos" bson:"votos"`
+	Id        string `json:"id" bson:"id"`
+	Nome      string `json:"name" bson:"name"`
+	Simbolo   string `json:"symbol" bson:"symbol"`
+	Voto      int    `json:"votes" bson:"votes"`
+	CreatedAT string `json:"createdat" bson:"createdat"`
+	UpdatedAT string `json:"updatedat" bson:"updatedat"`
 }
+
+//lista de moedas
+type Moedas []MoedaCripto
 
 func (mc *MoedaCripto) CriarNovaCriptoMoeda() *MoedaCripto {
 	misc.Limpatela()
@@ -22,7 +28,8 @@ func (mc *MoedaCripto) CriarNovaCriptoMoeda() *MoedaCripto {
 	fmt.Scan(&mc.Nome)
 	fmt.Print("INFORME O SIMBOLO DA MOEDA: ")
 	fmt.Scan(&mc.Simbolo)
-	mc.Votos = 0
+	mc.Voto = 0
+	mc.CreatedAT = time.Now().Format("02/01/2006 15:04:45")
 	misc.Limpatela()
 	return mc
 }
@@ -79,7 +86,7 @@ func (mc *MoedaCripto) UpVote(id string, lista []MoedaCripto) (voteup int, found
 	for indice, elemento := range lista {
 		if id == elemento.Id {
 			found = true
-			voteup := elemento.Votos + 1
+			voteup := elemento.Voto + 1
 
 			return voteup, found, indice
 		}
@@ -97,9 +104,9 @@ func (mc *MoedaCripto) DownVote(id string, lista []MoedaCripto) (votedown int, f
 	pause := ""
 	for i, elemento := range lista {
 		if id == elemento.Id {
-			if elemento.Votos > 0 {
+			if elemento.Voto > 0 {
 				found = true
-				votedown = lista[i].Votos - 1
+				votedown = lista[i].Voto - 1
 				return votedown, found, i
 			} else {
 				misc.Limpatela()
@@ -129,7 +136,7 @@ func (mc *MoedaCripto) ListarCriptoMoedas(lista []MoedaCripto) {
 		fmt.Println("ID: ", elemento.Id)
 		fmt.Println("MOEDA: ", elemento.Nome)
 		fmt.Println("SIMBOLO: ", elemento.Simbolo)
-		fmt.Print("VOTOS: ", elemento.Votos)
+		fmt.Print("VOTOS: ", elemento.Voto)
 		misc.PulaLinha()
 	}
 }

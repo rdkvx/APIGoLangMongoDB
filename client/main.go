@@ -3,29 +3,30 @@ package main
 import (
 	"DesafioTecnico/client/misc"
 	"DesafioTecnico/server/model"
+	services "DesafioTecnico/server/services/moeda.service"
 	"fmt"
 )
 
 func main() {
 	op := true
 	pause := ""
-	moedas := []model.MoedaCripto{}
+	Moedas := []model.MoedaCripto{}
 	for op {
 
 		switch misc.MenuInicial() {
 		case 1:
 			mc := model.MoedaCripto{}
 			mc.CriarNovaCriptoMoeda()
-			moedas = append(moedas, mc)
+			services.CriarNovaCriptoMoedaAPI(mc)
 		case 2:
 			misc.Limpatela()
 			mc := model.MoedaCripto{}
 			tempId := ""
 			fmt.Print("INFORME O ID DA MOEDA: ")
 			fmt.Scan(&tempId)
-			indice, obj, found := mc.EditarCriptoMoeda(tempId, moedas)
+			indice, obj, found := mc.EditarCriptoMoeda(tempId, Moedas)
 			if found {
-				moedas[indice] = *obj
+				Moedas[indice] = *obj
 			}
 		case 3:
 			misc.Limpatela()
@@ -36,12 +37,12 @@ func main() {
 			fmt.Print("INFORME O ID DA MOEDA: ")
 			fmt.Scan(&tempId)
 
-			indice, found := mc.DeletarCriptoMoeda(tempId, moedas)
+			indice, found := mc.DeletarCriptoMoeda(tempId, Moedas)
 			if found {
-				moedas[indice].Nome = ""
-				moedas[indice].Id = ""
-				moedas[indice].Simbolo = ""
-				moedas[indice].Votos = 0
+				Moedas[indice].Nome = ""
+				Moedas[indice].Id = ""
+				Moedas[indice].Simbolo = ""
+				Moedas[indice].Voto = 0
 				fmt.Print("MOEDA DELETADA COM SUCESSO")
 				fmt.Scan(&pause)
 				misc.Limpatela()
@@ -53,13 +54,13 @@ func main() {
 			fmt.Print("INFORME O ID DA MOEDA: ")
 			fmt.Scan(&tempID)
 
-			voteup, found, indice := mc.UpVote(tempID, moedas)
+			voteup, found, indice := mc.UpVote(tempID, Moedas)
 			if found {
 				misc.Limpatela()
-				moedas[indice].Votos = voteup
+				Moedas[indice].Voto = voteup
 				fmt.Print("VOTO REGISTRADO!\n")
-				fmt.Println("MOEDA: ", moedas[indice].Nome)
-				fmt.Println("VOTOS: ", moedas[indice].Votos)
+				fmt.Println("MOEDA: ", Moedas[indice].Nome)
+				fmt.Println("Voto: ", Moedas[indice].Voto)
 				fmt.Scan(&pause)
 			}
 
@@ -69,19 +70,19 @@ func main() {
 			fmt.Scan(&tempId)
 
 			mc := model.MoedaCripto{}
-			votedown, found, indice := mc.DownVote(tempId, moedas)
+			votedown, found, indice := mc.DownVote(tempId, Moedas)
 			if found {
 				misc.Limpatela()
-				moedas[indice].Votos = votedown
+				Moedas[indice].Voto = votedown
 				fmt.Println("VOTO REGISTRADO!")
-				fmt.Println("MOEDA: ", moedas[indice].Nome)
-				fmt.Println("VOTOS: ", moedas[indice].Votos)
+				fmt.Println("MOEDA: ", Moedas[indice].Nome)
+				fmt.Println("Voto: ", Moedas[indice].Voto)
 				fmt.Scan(&pause)
 			}
 		case 6:
 			misc.Limpatela()
 			mc := model.MoedaCripto{}
-			mc.ListarCriptoMoedas(moedas)
+			mc.ListarCriptoMoedas(Moedas)
 			fmt.Scan(&pause)
 			misc.Limpatela()
 		case 0:
