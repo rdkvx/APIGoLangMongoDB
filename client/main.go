@@ -8,6 +8,12 @@ import (
 )
 
 func main() {
+	// collection := client.Database(dataBase).Collection(col)
+	// result, err = collection.Find(ctx, bson.D{})
+
+	/*teste, _ := services.ListarUmaCriptoAPI("0375b319-85db-4f76-8ae7-5990a763fba1")
+	fmt.Println(teste)*/
+
 	op := true
 	pause := ""
 	Moedas := []model.MoedaCripto{}
@@ -24,9 +30,16 @@ func main() {
 			tempId := ""
 			fmt.Print("INFORME O ID DA MOEDA: ")
 			fmt.Scan(&tempId)
-			indice, obj, found := mc.EditarCriptoMoeda(tempId, Moedas)
+			res, err := services.ListarUmaCriptoAPI(tempId)
+			if (err != nil){
+				fmt.Print("erro : ",err)
+			}
+			fmt.Print("resposta: ", res)
+			fmt.Scan(&pause)
+			obj, found := mc.EditarCriptoMoeda(tempId, Moedas)
 			if found {
-				Moedas[indice] = *obj
+				//Moedas[indice] = *obj
+				services.EditarCriptoMoedaAPI(tempId, *obj)
 			}
 		case 3:
 			misc.Limpatela()

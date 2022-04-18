@@ -9,7 +9,7 @@ import (
 )
 
 type MoedaCripto struct {
-	Id        string `json:"id" bson:"id"`
+	Id        string `json:"id" bson:"_id"`
 	Nome      string `json:"name" bson:"name"`
 	Simbolo   string `json:"symbol" bson:"symbol"`
 	Voto      int    `json:"votes" bson:"votes"`
@@ -34,7 +34,11 @@ func (mc *MoedaCripto) CriarNovaCriptoMoeda() *MoedaCripto {
 	return mc
 }
 
-func (mc *MoedaCripto) EditarCriptoMoeda(id string, lista []MoedaCripto) (indice int, obj *MoedaCripto, found bool) {
+func (mc *MoedaCripto) BuscaUmaCripto(id string) {
+
+}
+
+func (mc *MoedaCripto) EditarCriptoMoeda(id string, lista []MoedaCripto) (obj *MoedaCripto, found bool) {
 	found = false
 	pause := ""
 	for i, item := range lista {
@@ -48,9 +52,11 @@ func (mc *MoedaCripto) EditarCriptoMoeda(id string, lista []MoedaCripto) (indice
 			fmt.Print("NOVO SIMBOLO: ")
 			fmt.Scan(&item.Simbolo)
 
+			mc.UpdatedAT = time.Now().Format("02/01/2006 15:04:45")
+
 			found = true
 			misc.Limpatela()
-			return i, &item, found
+			return &item, found
 		}
 	}
 	fmt.Printf("Moeda nao encontrada")

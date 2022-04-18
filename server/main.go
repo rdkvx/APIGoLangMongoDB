@@ -1,7 +1,6 @@
 package main
 
 import (
-	"DesafioTecnico/database"
 	"fmt"
 	"net/http"
 
@@ -14,7 +13,6 @@ func main() {
 	if err != nil {
 		fmt.Print("erro ao conectar no banco")
 	} */
-	database.ConnectMongo()
 	
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Print("Ola Mundo")
