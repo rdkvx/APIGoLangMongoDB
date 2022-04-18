@@ -31,12 +31,11 @@ func main() {
 			fmt.Print("INFORME O ID DA MOEDA: ")
 			fmt.Scan(&tempId)
 			res, err := services.ListarUmaCriptoAPI(tempId)
-			if (err != nil){
-				fmt.Print("erro : ",err)
+			if (err == nil){
+				obj := mc.EditarCriptoMoeda(res.Id, res)
+				services.EditarCriptoMoedaAPI(res.Id, *obj)
 			}
-			obj := mc.EditarCriptoMoeda(res.Id, res)
 			
-			services.EditarCriptoMoedaAPI(res.Id, *obj)
 			
 		case 3:
 			misc.Limpatela()
