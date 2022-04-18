@@ -38,32 +38,17 @@ func (mc *MoedaCripto) BuscaUmaCripto(id string) {
 
 }
 
-func (mc *MoedaCripto) EditarCriptoMoeda(id string, lista []MoedaCripto) (obj *MoedaCripto, found bool) {
-	found = false
-	pause := ""
-	for i, item := range lista {
-		if id == item.Id {
-			misc.Limpatela()
-			fmt.Print("TOKEN: ", item.Nome, " ENCONTRADO NA POSICAO: ", i, "\n\n")
+func (mc *MoedaCripto) EditarCriptoMoeda(id string, moeda MoedaCripto) (obj *MoedaCripto) {
+	
+	fmt.Print("NOVO NOME: ")
+	fmt.Scan(&moeda.Nome)
 
-			fmt.Print("NOVO NOME: ")
-			fmt.Scan(&item.Nome)
+	fmt.Print("NOVO SIMBOLO: ")
+	fmt.Scan(&moeda.Simbolo)
 
-			fmt.Print("NOVO SIMBOLO: ")
-			fmt.Scan(&item.Simbolo)
-
-			mc.UpdatedAT = time.Now().Format("02/01/2006 15:04:45")
-
-			found = true
-			misc.Limpatela()
-			return &item, found
-		}
-	}
-	fmt.Printf("Moeda nao encontrada")
-	fmt.Scan(&pause)
-	misc.Limpatela()
-
-	return
+	moeda.UpdatedAT = time.Now().Format("02/01/2006 15:04:45")
+	
+	return &moeda
 }
 
 func (mc *MoedaCripto) DeletarCriptoMoeda(id string, lista []MoedaCripto) (indice int, found bool) {

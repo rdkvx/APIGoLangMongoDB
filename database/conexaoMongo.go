@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"gopkg.in/mgo.v2/bson"
+	//"gopkg.in/mgo.v2/bson"
 )
 
 func Uri()(conexao string){
@@ -90,6 +90,7 @@ func UpdateOne(client *mongo.Client, ctx context.Context, dataBase, col string, 
 	// filter will get updated.
 	// update contains the filed which should get updated.
 	result, err = collection.UpdateOne(ctx, filter, update)
+	
 	return
 }
 
@@ -100,9 +101,9 @@ func Query(client *mongo.Client, ctx context.Context, dataBase, col string, filt
 
 	// collection has an method Find,
 	// that returns a mongo.cursor
-	// based on query and field.
-	// result, err = collection.Find(ctx, filter, options.Find().SetProjection(option))
-	result, err = collection.Find(context.Background(), bson.M{})
-
+	// based on filter and option.
+	// result, err = collection.Find(ctx.Background, filter, options.Find().SetProjection(option))
+	result, err = collection.Find(context.Background(), filter)
+	//bson.M{}
 	return
 }

@@ -34,13 +34,10 @@ func main() {
 			if (err != nil){
 				fmt.Print("erro : ",err)
 			}
-			fmt.Print("resposta: ", res)
-			fmt.Scan(&pause)
-			obj, found := mc.EditarCriptoMoeda(tempId, Moedas)
-			if found {
-				//Moedas[indice] = *obj
-				services.EditarCriptoMoedaAPI(tempId, *obj)
-			}
+			obj := mc.EditarCriptoMoeda(res.Id, res)
+			
+			services.EditarCriptoMoedaAPI(res.Id, *obj)
+			
 		case 3:
 			misc.Limpatela()
 

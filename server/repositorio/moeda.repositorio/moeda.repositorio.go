@@ -41,6 +41,7 @@ func Create(mc m.MoedaCripto) error {
 	fmt.Println("Inserts realizados")
 	fmt.Println(insertOneResult)
 	fmt.Println("MOEDA CRIADA COM SUCESSO")
+
 	fmt.Scan(&pause)
 	misc.Limpatela()
 
@@ -60,21 +61,26 @@ func Read(id string) (mc m.MoedaCripto, err error) {
 	}
 	defer cur.Close(context.Background())
 
-	pause := ""
 	var results = []model.MoedaCripto{}
 
-	if err = cur.All(context.Background(), &results); err != nil {
+/* 	if err = cur.All(context.Background(), &results); err != nil {
 		log.Fatal(err)
+	} */
+	
+	/* if err = cur.Decode(context.Background(), &results); err != nil {
+		log.Fatal(err)
+	} */
 
-	}
-	fmt.Print("moeda repositorio results: ", results)
-	fmt.Scan(&pause)
 	mc = results[0]
+	fmt.Println("MOEDA: ", mc.Nome)
+	
 
 	return mc, err
 }
 
 func Update(id string, mc m.MoedaCripto) error {
+	pause := ""
+	
 	// get Client, Context, CalcelFunc and err from connect method.
 	client, ctx, cancel, err := database.Connect(database.Uri())
 	if err != nil {
@@ -86,21 +92,20 @@ func Update(id string, mc m.MoedaCripto) error {
 
 	// filter object is used to select a single
 	// document matching that matches.
-	filter := bson.D{
-		{"moedacripto", bson.D{{"id", id}}},
-	}
+	//filter := bson.M{"moedacripto": bson.M{"_id": id},}
+	filter := bson.M{"_id": bson.M{"$eq": id}}
+	
 
 	// The field of the document that need to updated.
-	update := bson.D{
-		{"$set", bson.D{
-			{"name", mc.Nome},
-			{"symbol", mc.Simbolo},
-			{"updatedat", mc.UpdatedAT},
-		}},
+	update := bson.M{
+		"$set": bson.M{"name": mc.Nome,
+			"symbol": mc.Simbolo,
+			"updatedat": mc.UpdatedAT,
+		},
 	}
-
+	
 	// Returns result of updated document and a error.
-	result, err := database.UpdateOne(client, ctx, "desafiotecnico",
+	result, err := database.UpdateOne(client, context.Background(), "desafiotecnico",
 		"moedacripto", filter, update)
 
 	// handle error
@@ -108,22 +113,16 @@ func Update(id string, mc m.MoedaCripto) error {
 		panic(err)
 	}
 
-	// print count of documents that affected
-	fmt.Println("update single document")
-	fmt.Println(result.ModifiedCount)
-
-	/* filter = bson.D{
-		{"computer", bson.D{{"$lt", 100}}},
-	}
-	update = bson.D{
-		{"$set", bson.D{
-			{"computer", 100},
-		}},
-	}
-
-	// Returns result of updated document and a error.
-	result, err = Update(client, ctx, "desafiotecnico",
-		"moedacripto", filter, update) */
+	fmt.Println("MOEDA ATUALIZADA COM SUCESSO")
+	fmt.Println("INFORMACOES ATUALIZADAS!")
+	fmt.Println("")
+	fmt.Println("NOME: ", mc.Nome)
+	fmt.Println("SIMBOLO: ", mc.Simbolo)
+	fmt.Println("DATA DE CRIACAO: ", mc.CreatedAT)
+	fmt.Println("DATA DA ATUALIZACAO: ", mc.UpdatedAT)
+	fmt.Println("TOTAL DE DOCUMENTOS ATUALIZADOS: ", result.ModifiedCount)
+	fmt.Scan(&pause)
+	misc.Limpatela() 
 
 	return nil
 }
