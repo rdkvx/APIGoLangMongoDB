@@ -6,9 +6,6 @@ import (
 	"context"
 	"log"
 
-	//"DesafioTecnico/server/model"
-	//"DesafioTecnico/server/model"
-	"DesafioTecnico/server/model"
 	m "DesafioTecnico/server/model"
 	"fmt"
 
@@ -50,7 +47,7 @@ func Create(mc m.MoedaCripto) error {
 
 func Read(id string) (mc m.MoedaCripto, err error) {
 	pause := ""
-	
+
 	client, _, _, err := database.Connect(database.Uri())
 
 	collection := client.Database("desafiotecnico").Collection("moedacripto")
@@ -63,12 +60,12 @@ func Read(id string) (mc m.MoedaCripto, err error) {
 	}
 	//defer cur.Close(context.Background())
 
-	var results = model.MoedaCripto{}
+	var results = m.MoedaCripto{}
 
-/* 	if err = cur.All(context.Background(), &results); err != nil {
+	/* 	if err = cur.All(context.Background(), &results); err != nil {
 		log.Fatal(err)
 	} */
-	
+
 	if err = cur.Decode(&results); err != nil {
 		misc.Limpatela()
 		fmt.Println("ID INVALIDO")
@@ -77,15 +74,14 @@ func Read(id string) (mc m.MoedaCripto, err error) {
 		return
 	}
 	//mc = results[0]
-	fmt.Println("MOEDA: ", results.Nome)
-	
+	fmt.Print("MOEDA: ", results.Nome)
 
 	return results, err
 }
 
 func Update(id string, mc m.MoedaCripto) error {
 	pause := ""
-	
+
 	// get Client, Context, CalcelFunc and err from connect method.
 	client, ctx, cancel, err := database.Connect(database.Uri())
 	if err != nil {
@@ -99,16 +95,15 @@ func Update(id string, mc m.MoedaCripto) error {
 	// document matching that matches.
 	//filter := bson.M{"moedacripto": bson.M{"_id": id},}
 	filter := bson.M{"_id": bson.M{"$eq": id}}
-	
 
 	// The field of the document that need to updated.
 	update := bson.M{
 		"$set": bson.M{"name": mc.Nome,
-			"symbol": mc.Simbolo,
+			"symbol":    mc.Simbolo,
 			"updatedat": mc.UpdatedAT,
 		},
 	}
-	
+
 	// Returns result of updated document and a error.
 	result, err := database.UpdateOne(client, context.Background(), "desafiotecnico",
 		"moedacripto", filter, update)
@@ -128,11 +123,36 @@ func Update(id string, mc m.MoedaCripto) error {
 	fmt.Println("DATA DA ATUALIZACAO: ", mc.UpdatedAT)
 	fmt.Println("TOTAL DE DOCUMENTOS ATUALIZADOS: ", result.ModifiedCount)
 	fmt.Scan(&pause)
-	misc.Limpatela() 
+	misc.Limpatela()
 
 	return nil
 }
 
 func Delete(id string) error {
-	return nil
+	pause := ""
+
+	client, _, _, err := database.Connect(database.Uri())
+
+	collection := client.Database("desafiotecnico").Collection("moedacripto")
+
+	filter := bson.M{"_id": id}
+
+	cur := collection.FindOneAndDelete(context.Background(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var results = m.MoedaCripto{}
+
+	if err = cur.Decode(&results); err != nil {
+		misc.Limpatela()
+		fmt.Println("ID INVALIDO")
+		fmt.Scan(&pause)
+		return err
+	}
+
+	fmt.Println(" REMOVIDA COM SUCESSO")
+	fmt.Scan(&pause)
+
+	return err
 }

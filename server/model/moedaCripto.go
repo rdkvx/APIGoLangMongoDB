@@ -3,9 +3,6 @@ package model
 import (
 	"DesafioTecnico/client/misc"
 	"fmt"
-	"time"
-
-	"github.com/google/uuid"
 )
 
 type MoedaCripto struct {
@@ -19,56 +16,6 @@ type MoedaCripto struct {
 
 //lista de moedas
 type Moedas []MoedaCripto
-
-func (mc *MoedaCripto) CriarNovaCriptoMoeda() *MoedaCripto {
-	misc.Limpatela()
-	fmt.Print("CRIANDO NOVA MOEDA\n\n")
-	mc.Id = uuid.NewString()
-	fmt.Print("INFORME O NOME DA MOEDA: ")
-	fmt.Scan(&mc.Nome)
-	fmt.Print("INFORME O SIMBOLO DA MOEDA: ")
-	fmt.Scan(&mc.Simbolo)
-	mc.Voto = 0
-	mc.CreatedAT = time.Now().Format("02/01/2006 15:04:45")
-	misc.Limpatela()
-	return mc
-}
-
-func (mc *MoedaCripto) BuscaUmaCripto(id string) {
-
-}
-
-func (mc *MoedaCripto) EditarCriptoMoeda(id string, moeda MoedaCripto) (obj *MoedaCripto) {
-	
-	fmt.Print("NOVO NOME: ")
-	fmt.Scan(&moeda.Nome)
-
-	fmt.Print("NOVO SIMBOLO: ")
-	fmt.Scan(&moeda.Simbolo)
-
-	moeda.UpdatedAT = time.Now().Format("02/01/2006 15:04:45")
-	
-	return &moeda
-}
-
-func (mc *MoedaCripto) DeletarCriptoMoeda(id string, lista []MoedaCripto) (indice int, found bool) {
-	pause := ""
-	found = false
-
-	for i, elemento := range lista {
-		if id == elemento.Id {
-			found = true
-			return i, found
-		}
-	}
-
-	misc.Limpatela()
-	fmt.Print("MOEDA NAO ENCONTRADA")
-	fmt.Print(indice)
-	fmt.Scan(&pause)
-
-	return
-}
 
 func (mc *MoedaCripto) UpVote(id string, lista []MoedaCripto) (voteup int, found bool, indice int) {
 	pause := ""

@@ -21,40 +21,29 @@ func main() {
 
 		switch misc.MenuInicial() {
 		case 1:
-			mc := model.MoedaCripto{}
-			mc.CriarNovaCriptoMoeda()
-			services.CriarNovaCriptoMoedaAPI(mc)
+			services.CriarNovaCriptoMoedaAPI()
 		case 2:
 			misc.Limpatela()
-			mc := model.MoedaCripto{}
 			tempId := ""
+
 			fmt.Print("INFORME O ID DA MOEDA: ")
 			fmt.Scan(&tempId)
+
 			res, err := services.ListarUmaCriptoAPI(tempId)
-			if (err == nil){
-				obj := mc.EditarCriptoMoeda(res.Id, res)
-				services.EditarCriptoMoedaAPI(res.Id, *obj)
+
+			if err == nil {
+				services.EditarCriptoMoedaAPI(res.Id, res)
 			}
-			
-			
 		case 3:
 			misc.Limpatela()
-
-			mc := model.MoedaCripto{}
 			tempId := ""
 
 			fmt.Print("INFORME O ID DA MOEDA: ")
 			fmt.Scan(&tempId)
-
-			indice, found := mc.DeletarCriptoMoeda(tempId, Moedas)
-			if found {
-				Moedas[indice].Nome = ""
-				Moedas[indice].Id = ""
-				Moedas[indice].Simbolo = ""
-				Moedas[indice].Voto = 0
-				fmt.Print("MOEDA DELETADA COM SUCESSO")
-				fmt.Scan(&pause)
-				misc.Limpatela()
+			
+			res, err := services.ListarUmaCriptoAPI(tempId)
+			if err == nil {
+				services.DeletarCriptoMoedaAPI(res.Id)
 			}
 		case 4:
 			tempID := ""
@@ -72,7 +61,6 @@ func main() {
 				fmt.Println("Voto: ", Moedas[indice].Voto)
 				fmt.Scan(&pause)
 			}
-
 		case 5:
 			tempId := ""
 			fmt.Print("INFORME O ID DA MOEDA: ")
