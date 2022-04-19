@@ -3,13 +3,14 @@ package services
 import (
 	"DesafioTecnico/client/misc"
 	"DesafioTecnico/database"
-	"DesafioTecnico/server/model"
 	m "DesafioTecnico/server/model"
 	mr "DesafioTecnico/server/repositorio/moeda.repositorio"
 	"context"
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/google/uuid"
 
 	"gopkg.in/mgo.v2/bson"
 	/* "github.com/google/uuid" */)
@@ -24,15 +25,31 @@ func CriarNovaCriptoMoedaAPI(mc m.MoedaCripto) error {
 	return nil
 }
 
-func EditarCriptoMoedaAPI(id string, mc m.MoedaCripto) (m.MoedaCripto, error) {
-	
-	mc.UpdatedAT = time.Now().Format("02/01/2006 15:04:45")
+func CriarNovaCriptoMoedaClient() {
+	misc.Limpatela()
+	mc := m.MoedaCripto{}
+	fmt.Print("CRIANDO NOVA MOEDA\n\n")
+	mc.Id = uuid.NewString()
+	fmt.Print("INFORME O NOME DA MOEDA: ")
+	fmt.Scan(&mc.Nome)
+	fmt.Print("INFORME O SIMBOLO DA MOEDA: ")
+	fmt.Scan(&mc.Simbolo)
+	mc.Voto = 0
+	mc.CreatedAT = time.Now().Format("02/01/2006 15:04:45")
+	misc.Limpatela()
 
-	err := mr.Update(id, mc)
+	CriarNovaCriptoMoedaAPI(mc)
+}
+
+func EditarCriptoMoedaAPI(mc m.MoedaCripto) (m.MoedaCripto, error) {
+
+	err := mr.Update(mc)
 
 	if err != nil {
 		return mc, err
 	}
+
+	mc.UpdatedAT = time.Now().Format("02/01/2006 15:04:45")
 	return mc, nil
 }
 
@@ -55,13 +72,12 @@ func EditaCriptoMoedaClient() {
 
 		fmt.Print("NOVO SIMBOLO: ")
 		fmt.Scan(&res.Simbolo)
-		obj, err := EditarCriptoMoedaAPI(res.Id, res)
+		obj, err := EditarCriptoMoedaAPI(res)
 		if err != nil {
 			log.Panic("ERRO AO EDITAR CRIPTO! ", err)
 		}
-		model.FeedbackEditarCriptoMoeda(obj)
+		m.FeedbackEditarCriptoMoeda(obj)
 	}
-	
 }
 
 func DeletarCriptoMoedaAPI(id string) error {
@@ -73,8 +89,38 @@ func DeletarCriptoMoedaAPI(id string) error {
 	return nil
 }
 
-func UpVoteAPI(id string) error {
+func DeletarCriptoMoedaClient() {
+	misc.Limpatela()
+	tempID := ""
 	pause := ""
+
+	fmt.Print("INFORME O ID DA MOEDA: ")
+	fmt.Scan(&tempID)
+
+	res, err := BuscarUmaCriptoAPI(tempID)
+	if err != nil {
+		misc.Limpatela()
+		fmt.Print("ID INVALIDO")
+		fmt.Scan(&pause)
+		misc.Limpatela()
+	} else {
+		err = DeletarCriptoMoedaAPI(res.Id)
+		if err != nil {
+			misc.Limpatela()
+			fmt.Println("ERRO AO DELETAR CRIPTO! ", err)
+			fmt.Scan(&pause)
+			misc.Limpatela()
+		} else {
+			misc.Limpatela()
+			fmt.Println("CRIPTO ", res.Nome, " DELETADA COM SUCESSO")
+			fmt.Scan(&pause)
+			misc.Limpatela()
+		}
+	}
+
+}
+
+func UpVoteAPI(id string) (m.MoedaCripto, error) {
 
 	client, ctx, cancel, err := database.Connect(database.Uri())
 	if err != nil {
@@ -91,28 +137,50 @@ func UpVoteAPI(id string) error {
 
 	_, err = mr.UpdateOne(client, context.Background(), "desafiotecnico", "moedacripto", filter, update)
 
-	if err != nil {
-		fmt.Println("ERRO AO REGISTRAR VOTO!!!")
-		panic(err)
+	if err == nil {
+		mc, err := mr.Read(id)
+		return mc, err
 	}
 
-	mc, err := mr.Read(id)
-
-	misc.Limpatela()
-	fmt.Println("VOTO COMPUTADO")
-	fmt.Println("INFORMACOES ATUALIZADAS!")
-	fmt.Println("")
-	fmt.Println("NOME : ", mc.Nome)
-	fmt.Println("VOTOS: ", mc.Voto)
-	fmt.Scan(&pause)
-	misc.Limpatela()
-
-	return err
+	return m.MoedaCripto{}, err
 }
 
-func DownVoteAPI(id string, mc m.MoedaCripto) error {
+func UpVoteClient() {
+	tempID := ""
 	pause := ""
 
+	misc.Limpatela()
+	fmt.Print("INFORME O ID DA MOEDA: ")
+	fmt.Scan(&tempID)
+
+	res, err := BuscarUmaCriptoAPI(tempID)
+
+	if err != nil {
+		misc.Limpatela()
+		fmt.Println("ID INVALIDO!")
+		fmt.Scan(&pause)
+		misc.Limpatela()
+
+	} else {
+		mc, err := UpVoteAPI(res.Id)
+
+		if err == nil {
+			misc.Limpatela()
+			fmt.Println("VOTO COMPUTADO")
+			fmt.Println("INFORMACOES ATUALIZADAS!")
+			fmt.Println("")
+			fmt.Println("NOME : ", mc.Nome)
+			fmt.Println("VOTOS: ", mc.Voto)
+			fmt.Scan(&pause)
+			misc.Limpatela()
+		} else {
+			fmt.Println("ERRO AO REGISTRAR VOTO!!!")
+			panic(err)
+		}
+	}
+}
+
+func DownVoteAPI(id string) (m.MoedaCripto, error) {
 	client, ctx, cancel, err := database.Connect(database.Uri())
 	if err != nil {
 		panic(err)
@@ -120,43 +188,71 @@ func DownVoteAPI(id string, mc m.MoedaCripto) error {
 
 	defer database.Close(client, ctx, cancel)
 
-	filter := bson.M{"_id": bson.M{"$eq": id}}
+	filter := bson.M{"_id": id}
 
 	update := bson.M{
 		"$inc": bson.M{"votes": -1},
 	}
 
-	if mc.Voto > 0 {
-		result, err := mr.UpdateOne(client, context.Background(), "desafiotecnico", "moedacripto", filter, update)
+	_, err = mr.UpdateOne(client, context.Background(), "desafiotecnico", "moedacripto", filter, update)
 
-		if err != nil {
-			panic(err)
-		}
-
-		misc.Limpatela()
-		fmt.Println("VOTO COMPUTADO")
-		fmt.Println("INFORMACOES ATUALIZADAS!")
-		fmt.Println("")
-		fmt.Println("NOME : ", mc.Nome)
-		fmt.Println("VOTOS: ", mc.Voto-1)
-		fmt.Println("TOTAL DE DOCUMENTOS ATUALIZADOS: ", result.ModifiedCount)
-		fmt.Scan(&pause)
-		misc.Limpatela()
-		return err
+	if err == nil {
+		mc, err := mr.Read(id)
+		return mc, err
 	}
 
-	misc.Limpatela()
-	fmt.Println("A MOEDA NAO POSSUI VOTO")
-	fmt.Scan(&pause)
-	misc.Limpatela()
+	return m.MoedaCripto{}, err
+}
 
-	return err
+func DownVoteClient() {
+	tempID := ""
+	pause := ""
+
+	misc.Limpatela()
+	fmt.Print("INFORME O ID DA MOEDA: ")
+	fmt.Scan(&tempID)
+
+	res, err := BuscarUmaCriptoAPI(tempID)
+
+	if err != nil {
+		misc.Limpatela()
+		fmt.Println("ID INVALIDO!")
+		fmt.Scan(&pause)
+		misc.Limpatela()
+
+	} else {
+		mc, err := DownVoteAPI(res.Id)
+
+		if err == nil {
+			misc.Limpatela()
+			fmt.Println("VOTO COMPUTADO")
+			fmt.Println("INFORMACOES ATUALIZADAS!")
+			fmt.Println("")
+			fmt.Println("NOME : ", mc.Nome)
+			fmt.Println("VOTOS: ", mc.Voto)
+			fmt.Scan(&pause)
+			misc.Limpatela()
+		} else {
+			fmt.Println("ERRO AO REGISTRAR VOTO!!!")
+			panic(err)
+		}
+	}
 }
 
 func BuscarUmaCriptoAPI(id string) (m.MoedaCripto, error) {
 	mc, err := mr.Read(id)
 
 	return mc, err
+}
+
+func BuscarUmaCriptoClient(){
+	pause := ""
+	err := ListarCriptoMoedasAPI()
+
+	if err != nil {
+		fmt.Println("ERRO AO LISTAR CRIPTOS")
+		fmt.Scan(&pause)
+	}
 }
 
 func ListarCriptoMoedasAPI() (err error) {

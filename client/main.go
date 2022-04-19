@@ -2,70 +2,36 @@ package main
 
 import (
 	"DesafioTecnico/client/misc"
-	"DesafioTecnico/server/model"
 	services "DesafioTecnico/server/services/moeda.service"
 	"fmt"
-	//"log"
+	
 )
 
 func main() {
-
-	op := true
 	pause := ""
+	op := true
 	for op {
 
 		switch misc.MenuInicial() {
 		case 1:
-			mc := model.MoedaCripto{}
-			mc.CriarNovaCriptoMoeda()
-			services.CriarNovaCriptoMoedaAPI(mc)
+			services.CriarNovaCriptoMoedaClient()
 		case 2:
 			services.EditaCriptoMoedaClient()
 		case 3:
-			misc.Limpatela()
-			tempID := ""
-
-			fmt.Print("INFORME O ID DA MOEDA: ")
-			fmt.Scan(&tempID)
-
-			res, err := services.BuscarUmaCriptoAPI(tempID)
-			if err == nil {
-				services.DeletarCriptoMoedaAPI(res.Id)
-			}
+			services.DeletarCriptoMoedaClient()
 		case 4:
-			tempID := ""
-
-			fmt.Print("INFORME O ID DA MOEDA: ")
-			fmt.Scan(&tempID)
-
-			res, err := services.BuscarUmaCriptoAPI(tempID)
-
-			if err == nil {
-				services.UpVoteAPI(res.Id)
-			}
+			services.UpVoteClient()
 		case 5:
-			tempID := ""
-
-			fmt.Print("INFORME O ID DA MOEDA: ")
-			fmt.Scan(&tempID)
-
-			res, err := services.BuscarUmaCriptoAPI(tempID)
-
-			if err == nil {
-				services.DownVoteAPI(res.Id, res)
-			}
+			services.DownVoteClient()
 		case 6:
-			err := services.ListarCriptoMoedasAPI()
-
-			if err != nil {
-				fmt.Println("ERRO AO LISTAR CRIPTOS")
-				fmt.Scan(&pause)
-			}
+			services.BuscarUmaCriptoClient()
 		case 0:
 			op = false
 		default:
+			misc.Limpatela()
 			fmt.Print("Opcao Invalida")
-
+			fmt.Scan(&pause)
+			misc.Limpatela()
 		}
 	}
 }

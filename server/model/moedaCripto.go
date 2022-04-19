@@ -3,9 +3,6 @@ package model
 import (
 	"DesafioTecnico/client/misc"
 	"fmt"
-	"time"
-
-	"github.com/google/uuid"
 )
 
 type MoedaCripto struct {
@@ -17,31 +14,7 @@ type MoedaCripto struct {
 	UpdatedAT string `json:"updatedat" bson:"updatedat"`
 }
 
-func (mc *MoedaCripto) CriarNovaCriptoMoeda() *MoedaCripto {
-	misc.Limpatela()
-	fmt.Print("CRIANDO NOVA MOEDA\n\n")
-	mc.Id = uuid.NewString()
-	fmt.Print("INFORME O NOME DA MOEDA: ")
-	fmt.Scan(&mc.Nome)
-	fmt.Print("INFORME O SIMBOLO DA MOEDA: ")
-	fmt.Scan(&mc.Simbolo)
-	mc.Voto = 0
-	mc.CreatedAT = time.Now().Format("02/01/2006 15:04:45")
-	misc.Limpatela()
-	return mc
-}
-
-/* func EditaCriptoMoeda() (id string) {
-	misc.Limpatela()
-	tempId := ""
-
-	fmt.Print("INFORME O ID DA MOEDA: ")
-	fmt.Scan(&tempId)
-
-	return tempId
-} */
-
-func FeedbackEditarCriptoMoeda(mc MoedaCripto){
+func FeedbackEditarCriptoMoeda(mc MoedaCripto) {
 	pause := ""
 	misc.Limpatela()
 	fmt.Println("MOEDA ATUALIZADA COM SUCESSO")

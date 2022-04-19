@@ -41,7 +41,7 @@ func Create(mc m.MoedaCripto) error {
 }
 
 func Read(id string) (mc m.MoedaCripto, err error) {
-	
+
 	client, _, _, err := database.Connect(database.Uri())
 
 	collection := client.Database("desafiotecnico").Collection("moedacripto")
@@ -62,8 +62,8 @@ func Read(id string) (mc m.MoedaCripto, err error) {
 	return results, err
 }
 
-func Update(id string, mc m.MoedaCripto) error {
-	
+func Update(mc m.MoedaCripto) error {
+
 	client, ctx, cancel, err := database.Connect(database.Uri())
 	if err != nil {
 		panic(err)
@@ -71,7 +71,7 @@ func Update(id string, mc m.MoedaCripto) error {
 
 	defer database.Close(client, ctx, cancel)
 
-	filter := bson.M{"_id": bson.M{"$eq": id}}
+	filter := bson.M{"_id": bson.M{"$eq": mc.Id}}
 
 	update := bson.M{
 		"$set": bson.M{"name": mc.Nome,
@@ -90,7 +90,7 @@ func Update(id string, mc m.MoedaCripto) error {
 }
 
 func Delete(id string) error {
-	pause := ""
+	
 
 	client, _, _, err := database.Connect(database.Uri())
 
@@ -106,14 +106,9 @@ func Delete(id string) error {
 	var results = m.MoedaCripto{}
 
 	if err = cur.Decode(&results); err != nil {
-		misc.Limpatela()
-		fmt.Println("ID INVALIDO")
-		fmt.Scan(&pause)
+		
 		return err
 	}
-
-	fmt.Println(" REMOVIDA COM SUCESSO")
-	fmt.Scan(&pause)
 
 	return err
 }
