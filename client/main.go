@@ -36,45 +36,36 @@ func main() {
 			}
 		case 3:
 			misc.Limpatela()
-			tempId := ""
+			tempID := ""
 
 			fmt.Print("INFORME O ID DA MOEDA: ")
-			fmt.Scan(&tempId)
-			
-			res, err := services.ListarUmaCriptoAPI(tempId)
+			fmt.Scan(&tempID)
+
+			res, err := services.ListarUmaCriptoAPI(tempID)
 			if err == nil {
 				services.DeletarCriptoMoedaAPI(res.Id)
 			}
 		case 4:
 			tempID := ""
-			mc := model.MoedaCripto{}
-
+			
 			fmt.Print("INFORME O ID DA MOEDA: ")
 			fmt.Scan(&tempID)
 
-			voteup, found, indice := mc.UpVote(tempID, Moedas)
-			if found {
-				misc.Limpatela()
-				Moedas[indice].Voto = voteup
-				fmt.Print("VOTO REGISTRADO!\n")
-				fmt.Println("MOEDA: ", Moedas[indice].Nome)
-				fmt.Println("Voto: ", Moedas[indice].Voto)
-				fmt.Scan(&pause)
+			res, err := services.ListarUmaCriptoAPI(tempID)
+
+			if err == nil{
+					services.UpVoteAPI(res.Id, res)
 			}
 		case 5:
-			tempId := ""
+			tempID := ""
+			
 			fmt.Print("INFORME O ID DA MOEDA: ")
-			fmt.Scan(&tempId)
+			fmt.Scan(&tempID)
 
-			mc := model.MoedaCripto{}
-			votedown, found, indice := mc.DownVote(tempId, Moedas)
-			if found {
-				misc.Limpatela()
-				Moedas[indice].Voto = votedown
-				fmt.Println("VOTO REGISTRADO!")
-				fmt.Println("MOEDA: ", Moedas[indice].Nome)
-				fmt.Println("Voto: ", Moedas[indice].Voto)
-				fmt.Scan(&pause)
+			res, err := services.ListarUmaCriptoAPI(tempID)
+
+			if err == nil{
+					services.DownVoteAPI(res.Id, res)
 			}
 		case 6:
 			misc.Limpatela()

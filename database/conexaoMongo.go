@@ -36,13 +36,6 @@ func Close(client *mongo.Client, ctx context.Context,
 }
 
 func Connect(uri string) (*mongo.Client, context.Context, context.CancelFunc, error) {
-	/*
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
-	return client, ctx, cancel, err
-	*/
 
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 
@@ -102,8 +95,6 @@ func Query(client *mongo.Client, ctx context.Context, dataBase, col string, filt
 	// collection has an method Find,
 	// that returns a mongo.cursor
 	// based on filter and option.
-	// result, err = collection.Find(ctx.Background, filter, options.Find().SetProjection(option))
 	result, err = collection.Find(context.Background(), filter)
-	//bson.M{}
 	return
 }

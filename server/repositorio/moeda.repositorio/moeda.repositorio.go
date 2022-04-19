@@ -12,10 +12,6 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-/* func Uri() (conexao string) {
-	return "mongodb+srv://rdkvx:Dragonforce123@cluster0.ntd1x.mongodb.net/desafiotecnico?retryWrites=true&w=majority"
-} */
-
 func Create(mc m.MoedaCripto) error {
 	pause := ""
 
@@ -71,7 +67,7 @@ func Read(id string) (mc m.MoedaCripto, err error) {
 		fmt.Println("ID INVALIDO")
 		fmt.Scan(&pause)
 		/* log.Panic(err) */
-		return
+		return results, err
 	}
 	//mc = results[0]
 	fmt.Print("MOEDA: ", results.Nome)
