@@ -4,7 +4,6 @@ import (
 	"DesafioTecnico/client/misc"
 	services "DesafioTecnico/server/services/moeda.service"
 	"fmt"
-	
 )
 
 func main() {
@@ -24,7 +23,7 @@ func main() {
 		case 5:
 			services.DownVoteClient()
 		case 6:
-			services.BuscarUmaCriptoClient()
+			services.ListarCriptoMoedasClient()
 		case 0:
 			op = false
 		default:

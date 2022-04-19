@@ -1,7 +1,6 @@
 package moeda_repositorio
 
 import (
-	"DesafioTecnico/client/misc"
 	"DesafioTecnico/database"
 	"context"
 	"log"
@@ -14,14 +13,13 @@ import (
 )
 
 func Create(mc m.MoedaCripto) error {
-	pause := ""
 
 	client, ctx, cancel, err := database.Connect(database.Uri())
 	if err != nil {
 		panic(err)
 	}
 
-	insertOneResult, err := InsertOne(client, ctx, "desafiotecnico", "moedacripto", mc)
+	_, err = InsertOne(client, ctx, "desafiotecnico", "moedacripto", mc)
 
 	if err != nil {
 		fmt.Print("Erro ao inserir, erro: ", err.Error())
@@ -29,15 +27,7 @@ func Create(mc m.MoedaCripto) error {
 
 	defer database.Close(client, ctx, cancel)
 
-	misc.Limpatela()
-	fmt.Println("Inserts realizados")
-	fmt.Println(insertOneResult)
-	fmt.Println("MOEDA CRIADA COM SUCESSO")
-
-	fmt.Scan(&pause)
-	misc.Limpatela()
-
-	return nil
+	return err
 }
 
 func Read(id string) (mc m.MoedaCripto, err error) {

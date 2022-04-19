@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 
 	"gopkg.in/mgo.v2/bson"
-	/* "github.com/google/uuid" */)
+)
 
 func CriarNovaCriptoMoedaAPI(mc m.MoedaCripto) error {
 
@@ -26,19 +26,37 @@ func CriarNovaCriptoMoedaAPI(mc m.MoedaCripto) error {
 }
 
 func CriarNovaCriptoMoedaClient() {
+	pause := ""
+
 	misc.Limpatela()
 	mc := m.MoedaCripto{}
+
 	fmt.Print("CRIANDO NOVA MOEDA\n\n")
 	mc.Id = uuid.NewString()
+
 	fmt.Print("INFORME O NOME DA MOEDA: ")
 	fmt.Scan(&mc.Nome)
+
 	fmt.Print("INFORME O SIMBOLO DA MOEDA: ")
 	fmt.Scan(&mc.Simbolo)
+
 	mc.Voto = 0
 	mc.CreatedAT = time.Now().Format("02/01/2006 15:04:45")
+
 	misc.Limpatela()
 
-	CriarNovaCriptoMoedaAPI(mc)
+	err := CriarNovaCriptoMoedaAPI(mc)
+	if err == nil {
+		misc.Limpatela()
+		fmt.Println("MOEDA CRIADA COM SUCESSO")
+		fmt.Scan(&pause)
+		misc.Limpatela()
+	} else {
+		misc.Limpatela()
+		fmt.Println("ERRO AO CRIAR MOEDA!")
+		fmt.Scan(&pause)
+		misc.Limpatela()
+	}
 }
 
 func EditarCriptoMoedaAPI(mc m.MoedaCripto) (m.MoedaCripto, error) {
@@ -245,18 +263,8 @@ func BuscarUmaCriptoAPI(id string) (m.MoedaCripto, error) {
 	return mc, err
 }
 
-func BuscarUmaCriptoClient(){
-	pause := ""
-	err := ListarCriptoMoedasAPI()
-
-	if err != nil {
-		fmt.Println("ERRO AO LISTAR CRIPTOS")
-		fmt.Scan(&pause)
-	}
-}
-
-func ListarCriptoMoedasAPI() (err error) {
-	pause := ""
+func ListarCriptoMoedasAPI() (obj []m.MoedaCripto,err error) {
+	//pause := ""
 
 	client, _, _, err := database.Connect(database.Uri())
 
@@ -274,22 +282,29 @@ func ListarCriptoMoedasAPI() (err error) {
 	var results = []m.MoedaCripto{}
 
 	if err = cur.All(context.Background(), &results); err != nil {
-		misc.Limpatela()
-		fmt.Println("ERRO MOEDA SERVICE")
+		return []m.MoedaCripto{}, err
+	}
+
+	return results, err
+}
+
+func ListarCriptoMoedasClient() {
+	pause := ""
+	mc,err := ListarCriptoMoedasAPI()
+
+	if err != nil {
+		fmt.Println("ERRO AO LISTAR CRIPTOS")
 		fmt.Scan(&pause)
-		return err
+	}else{
+		misc.Limpatela()
+		for i, elemento := range mc {
+			fmt.Println("")
+			fmt.Println("MOEDA ", i+1)
+			fmt.Println("NOME: ", elemento.Nome)
+			fmt.Println("SIMBOLO: ", elemento.Simbolo)
+			fmt.Println("VOTOS: ", elemento.Voto)
+		}
+		fmt.Scan(&pause)
+		misc.Limpatela()
 	}
-
-	misc.Limpatela()
-	for i, elemento := range results {
-		fmt.Println("")
-		fmt.Println("MOEDA ", i+1)
-		fmt.Println("NOME: ", elemento.Nome)
-		fmt.Println("SIMBOLO: ", elemento.Simbolo)
-		fmt.Println("VOTOS: ", elemento.Voto)
-	}
-
-	fmt.Scan(&pause)
-
-	return err
 }
