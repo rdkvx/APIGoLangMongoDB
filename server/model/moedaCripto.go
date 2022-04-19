@@ -1,10 +1,5 @@
 package model
 
-import (
-	"DesafioTecnico/client/misc"
-	"fmt"
-)
-
 type MoedaCripto struct {
 	Id        string `json:"id" bson:"_id"`
 	Nome      string `json:"name" bson:"name"`
@@ -17,6 +12,7 @@ type MoedaCripto struct {
 //lista de moedas
 type Moedas []MoedaCripto
 
+/*
 func (mc *MoedaCripto) UpVote(id string, lista []MoedaCripto) (voteup int, found bool, indice int) {
 	pause := ""
 	found = false
@@ -36,7 +32,7 @@ func (mc *MoedaCripto) UpVote(id string, lista []MoedaCripto) (voteup int, found
 
 	return
 }
-
+*/ /*
 func (mc *MoedaCripto) DownVote(id string, lista []MoedaCripto) (votedown int, found bool, indice int) {
 	found = false
 	pause := ""
@@ -62,7 +58,8 @@ func (mc *MoedaCripto) DownVote(id string, lista []MoedaCripto) (votedown int, f
 
 	return
 }
-
+*/
+/*
 func (mc *MoedaCripto) ListarCriptoMoedas(lista []MoedaCripto) {
 	fmt.Print("TODAS AS MOEDAS REGISTRADAS\n\n")
 	for i, elemento := range lista {
@@ -78,3 +75,4 @@ func (mc *MoedaCripto) ListarCriptoMoedas(lista []MoedaCripto) {
 		misc.PulaLinha()
 	}
 }
+*/

@@ -79,7 +79,7 @@ func UpVoteAPI(id string, mc m.MoedaCripto) error {
 	// filter object is used to select a single
 	// document matching that matches.
 	//filter := bson.M{"moedacripto": bson.M{"_id": id},}
-	filter := bson.M{"_id": bson.M{"$eq": id}}
+	filter := bson.M{"_id": id}
 
 	// The field of the document that need to updated.
 	update := bson.M{
@@ -87,7 +87,7 @@ func UpVoteAPI(id string, mc m.MoedaCripto) error {
 	}
 
 	// Returns result of updated document and a error.
-	result, err := database.UpdateOne(client, context.Background(), "desafiotecnico",
+	_, err = database.UpdateOne(client, context.Background(), "desafiotecnico",
 		"moedacripto", filter, update)
 
 	// handle error
@@ -101,7 +101,7 @@ func UpVoteAPI(id string, mc m.MoedaCripto) error {
 	fmt.Println("")
 	fmt.Println("NOME : ", mc.Nome)
 	fmt.Println("VOTOS: ", mc.Voto+1)
-	fmt.Println("TOTAL DE DOCUMENTOS ATUALIZADOS: ", result.ModifiedCount)
+	//fmt.Println("TOTAL DE DOCUMENTOS ATUALIZADOS: ", result.ModifiedCount)
 	fmt.Scan(&pause)
 	misc.Limpatela()
 
@@ -175,6 +175,10 @@ func ListarCriptoMoedasAPI() (err error) {
 
 	client, _, _, err := database.Connect(database.Uri())
 
+	if err != nil {
+		fmt.Println("Erro ao conectar na base: ", err)
+	}
+
 	collection := client.Database("desafiotecnico").Collection("moedacripto")
 
 	//filter := bson.M{"_id": id}
@@ -191,16 +195,16 @@ func ListarCriptoMoedasAPI() (err error) {
 		log.Fatal(err)
 	} */
 
-	if err = cur.All(context.Background(),&results); err != nil {
+	if err = cur.All(context.Background(), &results); err != nil {
 		misc.Limpatela()
 		fmt.Println("ERRO MOEDA SERVICE")
 		fmt.Scan(&pause)
 		/* log.Panic(err) */
 		return err
 	}
-	
+
 	misc.Limpatela()
-	for i, elemento:= range(results){
+	for i, elemento := range results {
 		fmt.Println("")
 		fmt.Println("MOEDA ", i+1)
 		fmt.Println("NOME: ", elemento.Nome)
@@ -209,7 +213,6 @@ func ListarCriptoMoedasAPI() (err error) {
 	}
 
 	fmt.Scan(&pause)
-	
 
 	return err
 }

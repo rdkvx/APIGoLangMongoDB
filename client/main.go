@@ -2,6 +2,7 @@ package main
 
 import (
 	"DesafioTecnico/client/misc"
+	"DesafioTecnico/server/model"
 	services "DesafioTecnico/server/services/moeda.service"
 	"fmt"
 )
@@ -12,6 +13,8 @@ func main() {
 
 	/*teste, _ := services.ListarUmaCriptoAPI("0375b319-85db-4f76-8ae7-5990a763fba1")
 	fmt.Println(teste)*/
+
+	services.UpVoteAPI("3066fb1f-9645-4290-89ab-c2a24e1a1a18", model.MoedaCripto{})
 
 	op := true
 	pause := ""
@@ -53,7 +56,7 @@ func main() {
 			res, err := services.ListarUmaCriptoAPI(tempID)
 
 			if err == nil {
-				services.UpVoteAPI(res.Id, res)
+				services.UpVoteAPI("3066fb1f-9645-4290-89ab-c2a24e1a1a18", res)
 			}
 		case 5:
 			tempID := ""
