@@ -7,6 +7,7 @@ import (
 	moeda_repositorio "DesafioTecnico/server/repositorio/moeda.repositorio"
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
@@ -130,14 +131,14 @@ func DownVoteAPI(id string, mc m.MoedaCripto) error {
 		"$inc": bson.M{"votes": -1},
 	}
 
-	if mc.Voto > 0{
+	if mc.Voto > 0 {
 		// Returns result of updated document and a error.
 		result, err := database.UpdateOne(client, context.Background(), "desafiotecnico",
-		"moedacripto", filter, update)
+			"moedacripto", filter, update)
 
 		// handle error
 		if err != nil {
-		panic(err)
+			panic(err)
 		}
 
 		misc.Limpatela()
@@ -169,7 +170,46 @@ func ListarUmaCriptoAPI(id string) (m.MoedaCripto, error) {
 	return mc, err
 }
 
-func ListarCriptoMoedasAPI() (lista []m.MoedaCripto) {
+func ListarCriptoMoedasAPI() (err error) {
+	pause := ""
+
+	client, _, _, err := database.Connect(database.Uri())
+
+	collection := client.Database("desafiotecnico").Collection("moedacripto")
+
+	//filter := bson.M{"_id": id}
+
+	cur, err := collection.Find(context.Background(), bson.M{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	//defer cur.Close(context.Background())
+
+	var results = []m.MoedaCripto{}
+
+	/* 	if err = cur.All(context.Background(), &results); err != nil {
+		log.Fatal(err)
+	} */
+
+	if err = cur.All(context.Background(),&results); err != nil {
+		misc.Limpatela()
+		fmt.Println("ERRO MOEDA SERVICE")
+		fmt.Scan(&pause)
+		/* log.Panic(err) */
+		return err
+	}
 	
-	return
+	misc.Limpatela()
+	for i, elemento:= range(results){
+		fmt.Println("")
+		fmt.Println("MOEDA ", i+1)
+		fmt.Println("NOME: ", elemento.Nome)
+		fmt.Println("SIMBOLO: ", elemento.Simbolo)
+		fmt.Println("VOTOS: ", elemento.Voto)
+	}
+
+	fmt.Scan(&pause)
+	
+
+	return err
 }
