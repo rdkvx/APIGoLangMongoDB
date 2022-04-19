@@ -3,60 +3,69 @@ package services
 import (
 	"DesafioTecnico/client/misc"
 	"DesafioTecnico/database"
+	"DesafioTecnico/server/model"
 	m "DesafioTecnico/server/model"
-	moeda_repositorio "DesafioTecnico/server/repositorio/moeda.repositorio"
+	mr "DesafioTecnico/server/repositorio/moeda.repositorio"
 	"context"
 	"fmt"
 	"log"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
+	/* "github.com/google/uuid" */)
 
-	"github.com/google/uuid"
-)
+func CriarNovaCriptoMoedaAPI(mc m.MoedaCripto) error {
 
-func CriarNovaCriptoMoedaAPI() error {
-	mc := m.MoedaCripto{}
-
-	misc.Limpatela()
-	fmt.Print("CRIANDO NOVA MOEDA\n\n")
-	mc.Id = uuid.NewString()
-	fmt.Print("INFORME O NOME DA MOEDA: ")
-	fmt.Scan(&mc.Nome)
-	fmt.Print("INFORME O SIMBOLO DA MOEDA: ")
-	fmt.Scan(&mc.Simbolo)
-	mc.Voto = 0
-	mc.CreatedAT = time.Now().Format("02/01/2006 15:04:45")
-	misc.Limpatela()
-
-	err := moeda_repositorio.Create(mc)
+	err := mr.Create(mc)
 
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
-func EditarCriptoMoedaAPI(id string, mc m.MoedaCripto) error {
-	fmt.Print("\nNOVO NOME: ")
-	fmt.Scan(&mc.Nome)
-
-	fmt.Print("NOVO SIMBOLO: ")
-	fmt.Scan(&mc.Simbolo)
-
+func EditarCriptoMoedaAPI(id string, mc m.MoedaCripto) (m.MoedaCripto, error) {
+	
 	mc.UpdatedAT = time.Now().Format("02/01/2006 15:04:45")
 
-	err := moeda_repositorio.Update(id, mc)
+	err := mr.Update(id, mc)
 
 	if err != nil {
-		return err
+		return mc, err
 	}
-	return nil
+	return mc, nil
+}
+
+func EditaCriptoMoedaClient() {
+	misc.Limpatela()
+	tempID := ""
+	pause := ""
+
+	fmt.Print("INFORME O ID DA MOEDA: ")
+	fmt.Scan(&tempID)
+
+	res, err := BuscarUmaCriptoAPI(tempID)
+	if err != nil {
+		misc.Limpatela()
+		fmt.Println("ID INVALIDO")
+		fmt.Scan(&pause)
+	} else {
+		fmt.Print("\nNOVO NOME: ")
+		fmt.Scan(&res.Nome)
+
+		fmt.Print("NOVO SIMBOLO: ")
+		fmt.Scan(&res.Simbolo)
+		obj, err := EditarCriptoMoedaAPI(res.Id, res)
+		if err != nil {
+			log.Panic("ERRO AO EDITAR CRIPTO! ", err)
+		}
+		model.FeedbackEditarCriptoMoeda(obj)
+	}
+	
 }
 
 func DeletarCriptoMoedaAPI(id string) error {
-	err := moeda_repositorio.Delete(id)
+	err := mr.Delete(id)
 
 	if err != nil {
 		return err
@@ -64,79 +73,62 @@ func DeletarCriptoMoedaAPI(id string) error {
 	return nil
 }
 
-func UpVoteAPI(id string, mc m.MoedaCripto) error {
+func UpVoteAPI(id string) error {
 	pause := ""
 
-	// get Client, Context, CalcelFunc and err from connect method.
 	client, ctx, cancel, err := database.Connect(database.Uri())
 	if err != nil {
 		panic(err)
 	}
 
-	// Free the resource when main function in returned
 	defer database.Close(client, ctx, cancel)
 
-	// filter object is used to select a single
-	// document matching that matches.
-	//filter := bson.M{"moedacripto": bson.M{"_id": id},}
 	filter := bson.M{"_id": id}
 
-	// The field of the document that need to updated.
 	update := bson.M{
 		"$inc": bson.M{"votes": 1},
 	}
 
-	// Returns result of updated document and a error.
-	_, err = database.UpdateOne(client, context.Background(), "desafiotecnico",
-		"moedacripto", filter, update)
+	_, err = mr.UpdateOne(client, context.Background(), "desafiotecnico", "moedacripto", filter, update)
 
-	// handle error
 	if err != nil {
+		fmt.Println("ERRO AO REGISTRAR VOTO!!!")
 		panic(err)
 	}
+
+	mc, err := mr.Read(id)
 
 	misc.Limpatela()
 	fmt.Println("VOTO COMPUTADO")
 	fmt.Println("INFORMACOES ATUALIZADAS!")
 	fmt.Println("")
 	fmt.Println("NOME : ", mc.Nome)
-	fmt.Println("VOTOS: ", mc.Voto+1)
-	//fmt.Println("TOTAL DE DOCUMENTOS ATUALIZADOS: ", result.ModifiedCount)
+	fmt.Println("VOTOS: ", mc.Voto)
 	fmt.Scan(&pause)
 	misc.Limpatela()
 
 	return err
-
 }
 
 func DownVoteAPI(id string, mc m.MoedaCripto) error {
 	pause := ""
 
-	// get Client, Context, CalcelFunc and err from connect method.
 	client, ctx, cancel, err := database.Connect(database.Uri())
 	if err != nil {
 		panic(err)
 	}
 
-	// Free the resource when main function in returned
 	defer database.Close(client, ctx, cancel)
 
-	// filter object is used to select a single
-	// document matching that matches.
-	//filter := bson.M{"moedacripto": bson.M{"_id": id},}
 	filter := bson.M{"_id": bson.M{"$eq": id}}
 
-	// The field of the document that need to updated.
 	update := bson.M{
 		"$inc": bson.M{"votes": -1},
 	}
 
 	if mc.Voto > 0 {
-		// Returns result of updated document and a error.
-		result, err := database.UpdateOne(client, context.Background(), "desafiotecnico",
-			"moedacripto", filter, update)
+		result, err := mr.UpdateOne(client, context.Background(), "desafiotecnico", "moedacripto", filter, update)
 
-		// handle error
 		if err != nil {
 			panic(err)
 		}
@@ -161,12 +153,9 @@ func DownVoteAPI(id string, mc m.MoedaCripto) error {
 	return err
 }
 
-func ListarUmaCriptoAPI(id string) (m.MoedaCripto, error) {
-	mc, err := moeda_repositorio.Read(id)
+func BuscarUmaCriptoAPI(id string) (m.MoedaCripto, error) {
+	mc, err := mr.Read(id)
 
-	if err != nil {
-		return mc, err
-	}
 	return mc, err
 }
 
@@ -181,25 +170,17 @@ func ListarCriptoMoedasAPI() (err error) {
 
 	collection := client.Database("desafiotecnico").Collection("moedacripto")
 
-	//filter := bson.M{"_id": id}
-
 	cur, err := collection.Find(context.Background(), bson.M{})
 	if err != nil {
 		log.Fatal(err)
 	}
-	//defer cur.Close(context.Background())
 
 	var results = []m.MoedaCripto{}
-
-	/* 	if err = cur.All(context.Background(), &results); err != nil {
-		log.Fatal(err)
-	} */
 
 	if err = cur.All(context.Background(), &results); err != nil {
 		misc.Limpatela()
 		fmt.Println("ERRO MOEDA SERVICE")
 		fmt.Scan(&pause)
-		/* log.Panic(err) */
 		return err
 	}
 

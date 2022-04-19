@@ -29,7 +29,7 @@ func TestDeletarCriptoMoedaAPI(t *testing.T) {
 
 }
 
-func TestListarUmaCriptoAPI(t *testing.T) {
+func TestBuscarUmaCriptoAPI(t *testing.T) {
 
 }
 

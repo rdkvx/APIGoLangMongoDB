@@ -1,5 +1,13 @@
 package model
 
+import (
+	"DesafioTecnico/client/misc"
+	"fmt"
+	"time"
+
+	"github.com/google/uuid"
+)
+
 type MoedaCripto struct {
 	Id        string `json:"id" bson:"_id"`
 	Nome      string `json:"name" bson:"name"`
@@ -9,70 +17,40 @@ type MoedaCripto struct {
 	UpdatedAT string `json:"updatedat" bson:"updatedat"`
 }
 
-//lista de moedas
-type Moedas []MoedaCripto
-
-/*
-func (mc *MoedaCripto) UpVote(id string, lista []MoedaCripto) (voteup int, found bool, indice int) {
-	pause := ""
-	found = false
-
-	for indice, elemento := range lista {
-		if id == elemento.Id {
-			found = true
-			voteup := elemento.Voto + 1
-
-			return voteup, found, indice
-		}
-	}
-
+func (mc *MoedaCripto) CriarNovaCriptoMoeda() *MoedaCripto {
 	misc.Limpatela()
-	fmt.Print("MOEDA NAO ENCONTRADA")
-	fmt.Scan(&pause)
-
-	return
-}
-*/ /*
-func (mc *MoedaCripto) DownVote(id string, lista []MoedaCripto) (votedown int, found bool, indice int) {
-	found = false
-	pause := ""
-	for i, elemento := range lista {
-		if id == elemento.Id {
-			if elemento.Voto > 0 {
-				found = true
-				votedown = lista[i].Voto - 1
-				return votedown, found, i
-			} else {
-				misc.Limpatela()
-				fmt.Print("A MOEDA INFORMADA NAO POSSUI VOTOS REGISTRADOS")
-				fmt.Scan(&pause)
-				misc.Limpatela()
-				return
-			}
-		}
-	}
-
+	fmt.Print("CRIANDO NOVA MOEDA\n\n")
+	mc.Id = uuid.NewString()
+	fmt.Print("INFORME O NOME DA MOEDA: ")
+	fmt.Scan(&mc.Nome)
+	fmt.Print("INFORME O SIMBOLO DA MOEDA: ")
+	fmt.Scan(&mc.Simbolo)
+	mc.Voto = 0
+	mc.CreatedAT = time.Now().Format("02/01/2006 15:04:45")
 	misc.Limpatela()
-	fmt.Print("MOEDA NAO ENCONTRADA")
-	fmt.Scan(&pause)
+	return mc
+}
 
-	return
+/* func EditaCriptoMoeda() (id string) {
+	misc.Limpatela()
+	tempId := ""
+
+	fmt.Print("INFORME O ID DA MOEDA: ")
+	fmt.Scan(&tempId)
+
+	return tempId
+} */
+
+func FeedbackEditarCriptoMoeda(mc MoedaCripto){
+	pause := ""
+	misc.Limpatela()
+	fmt.Println("MOEDA ATUALIZADA COM SUCESSO")
+	fmt.Println("INFORMACOES ATUALIZADAS!")
+	fmt.Println("")
+	fmt.Println("NOME: ", mc.Nome)
+	fmt.Println("SIMBOLO: ", mc.Simbolo)
+	fmt.Println("DATA DE CRIACAO: ", mc.CreatedAT)
+	fmt.Println("DATA DA ATUALIZACAO: ", mc.UpdatedAT)
+	fmt.Scan(&pause)
+	misc.Limpatela()
 }
-*/
-/*
-func (mc *MoedaCripto) ListarCriptoMoedas(lista []MoedaCripto) {
-	fmt.Print("TODAS AS MOEDAS REGISTRADAS\n\n")
-	for i, elemento := range lista {
-		if i == 0 {
-			fmt.Println("TOTAL DE MOEDAS ENCONTRADAS: ", len(lista))
-			misc.PulaLinha()
-		}
-		fmt.Println("MOEDA NUMERO: ", i+1)
-		fmt.Println("ID: ", elemento.Id)
-		fmt.Println("MOEDA: ", elemento.Nome)
-		fmt.Println("SIMBOLO: ", elemento.Simbolo)
-		fmt.Print("VOTOS: ", elemento.Voto)
-		misc.PulaLinha()
-	}
-}
-*/

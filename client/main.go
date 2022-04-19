@@ -5,37 +5,22 @@ import (
 	"DesafioTecnico/server/model"
 	services "DesafioTecnico/server/services/moeda.service"
 	"fmt"
+	//"log"
 )
 
 func main() {
-	// collection := client.Database(dataBase).Collection(col)
-	// result, err = collection.Find(ctx, bson.D{})
-
-	/*teste, _ := services.ListarUmaCriptoAPI("0375b319-85db-4f76-8ae7-5990a763fba1")
-	fmt.Println(teste)*/
-
-	services.UpVoteAPI("3066fb1f-9645-4290-89ab-c2a24e1a1a18", model.MoedaCripto{})
 
 	op := true
 	pause := ""
-	//Moedas := []model.MoedaCripto{}
 	for op {
 
 		switch misc.MenuInicial() {
 		case 1:
-			services.CriarNovaCriptoMoedaAPI()
+			mc := model.MoedaCripto{}
+			mc.CriarNovaCriptoMoeda()
+			services.CriarNovaCriptoMoedaAPI(mc)
 		case 2:
-			misc.Limpatela()
-			tempId := ""
-
-			fmt.Print("INFORME O ID DA MOEDA: ")
-			fmt.Scan(&tempId)
-
-			res, err := services.ListarUmaCriptoAPI(tempId)
-
-			if err == nil {
-				services.EditarCriptoMoedaAPI(res.Id, res)
-			}
+			services.EditaCriptoMoedaClient()
 		case 3:
 			misc.Limpatela()
 			tempID := ""
@@ -43,7 +28,7 @@ func main() {
 			fmt.Print("INFORME O ID DA MOEDA: ")
 			fmt.Scan(&tempID)
 
-			res, err := services.ListarUmaCriptoAPI(tempID)
+			res, err := services.BuscarUmaCriptoAPI(tempID)
 			if err == nil {
 				services.DeletarCriptoMoedaAPI(res.Id)
 			}
@@ -53,10 +38,10 @@ func main() {
 			fmt.Print("INFORME O ID DA MOEDA: ")
 			fmt.Scan(&tempID)
 
-			res, err := services.ListarUmaCriptoAPI(tempID)
+			res, err := services.BuscarUmaCriptoAPI(tempID)
 
 			if err == nil {
-				services.UpVoteAPI("3066fb1f-9645-4290-89ab-c2a24e1a1a18", res)
+				services.UpVoteAPI(res.Id)
 			}
 		case 5:
 			tempID := ""
@@ -64,7 +49,7 @@ func main() {
 			fmt.Print("INFORME O ID DA MOEDA: ")
 			fmt.Scan(&tempID)
 
-			res, err := services.ListarUmaCriptoAPI(tempID)
+			res, err := services.BuscarUmaCriptoAPI(tempID)
 
 			if err == nil {
 				services.DownVoteAPI(res.Id, res)

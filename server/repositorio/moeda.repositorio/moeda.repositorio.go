@@ -9,6 +9,7 @@ import (
 	m "DesafioTecnico/server/model"
 	"fmt"
 
+	"go.mongodb.org/mongo-driver/mongo"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -20,14 +21,12 @@ func Create(mc m.MoedaCripto) error {
 		panic(err)
 	}
 
-	insertOneResult, err := database.InsertOne(client, ctx, "desafiotecnico", "moedacripto", mc)
+	insertOneResult, err := InsertOne(client, ctx, "desafiotecnico", "moedacripto", mc)
 
 	if err != nil {
 		fmt.Print("Erro ao inserir, erro: ", err.Error())
 	}
 
-	// Release resource when the main
-	// function is returned.
 	defer database.Close(client, ctx, cancel)
 
 	misc.Limpatela()
@@ -42,8 +41,7 @@ func Create(mc m.MoedaCripto) error {
 }
 
 func Read(id string) (mc m.MoedaCripto, err error) {
-	pause := ""
-
+	
 	client, _, _, err := database.Connect(database.Uri())
 
 	collection := client.Database("desafiotecnico").Collection("moedacripto")
@@ -54,45 +52,27 @@ func Read(id string) (mc m.MoedaCripto, err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//defer cur.Close(context.Background())
 
 	var results = m.MoedaCripto{}
 
-	/* 	if err = cur.All(context.Background(), &results); err != nil {
-		log.Fatal(err)
-	} */
-
 	if err = cur.Decode(&results); err != nil {
-		misc.Limpatela()
-		fmt.Println("ID INVALIDO")
-		fmt.Scan(&pause)
-		/* log.Panic(err) */
 		return results, err
 	}
-	//mc = results[0]
-	fmt.Print("MOEDA: ", results.Nome)
 
 	return results, err
 }
 
 func Update(id string, mc m.MoedaCripto) error {
-	pause := ""
-
-	// get Client, Context, CalcelFunc and err from connect method.
+	
 	client, ctx, cancel, err := database.Connect(database.Uri())
 	if err != nil {
 		panic(err)
 	}
 
-	// Free the resource when main function in returned
 	defer database.Close(client, ctx, cancel)
 
-	// filter object is used to select a single
-	// document matching that matches.
-	//filter := bson.M{"moedacripto": bson.M{"_id": id},}
 	filter := bson.M{"_id": bson.M{"$eq": id}}
 
-	// The field of the document that need to updated.
 	update := bson.M{
 		"$set": bson.M{"name": mc.Nome,
 			"symbol":    mc.Simbolo,
@@ -100,26 +80,11 @@ func Update(id string, mc m.MoedaCripto) error {
 		},
 	}
 
-	// Returns result of updated document and a error.
-	result, err := database.UpdateOne(client, context.Background(), "desafiotecnico",
-		"moedacripto", filter, update)
+	_, err = UpdateOne(client, context.Background(), "desafiotecnico", "moedacripto", filter, update)
 
-	// handle error
 	if err != nil {
 		panic(err)
 	}
-
-	misc.Limpatela()
-	fmt.Println("MOEDA ATUALIZADA COM SUCESSO")
-	fmt.Println("INFORMACOES ATUALIZADAS!")
-	fmt.Println("")
-	fmt.Println("NOME: ", mc.Nome)
-	fmt.Println("SIMBOLO: ", mc.Simbolo)
-	fmt.Println("DATA DE CRIACAO: ", mc.CreatedAT)
-	fmt.Println("DATA DA ATUALIZACAO: ", mc.UpdatedAT)
-	fmt.Println("TOTAL DE DOCUMENTOS ATUALIZADOS: ", result.ModifiedCount)
-	fmt.Scan(&pause)
-	misc.Limpatela()
 
 	return nil
 }
@@ -151,4 +116,33 @@ func Delete(id string) error {
 	fmt.Scan(&pause)
 
 	return err
+}
+
+func InsertOne(client *mongo.Client, ctx context.Context, dataBase, col string, doc interface{}) (*mongo.InsertOneResult, error) {
+
+	collection := client.Database(dataBase).Collection(col)
+
+	result, err := collection.InsertOne(context.Background(), doc)
+	if err != nil {
+		fmt.Print("Erro ao inserir: ", err)
+	}
+
+	return result, err
+}
+
+func UpdateOne(client *mongo.Client, ctx context.Context, dataBase, col string, filter, update interface{}) (result *mongo.UpdateResult, err error) {
+
+	collection := client.Database(dataBase).Collection(col)
+
+	result, err = collection.UpdateOne(ctx, filter, update)
+
+	return
+}
+
+func Query(client *mongo.Client, ctx context.Context, dataBase, col string, filter, option interface{}) (result *mongo.Cursor, err error) {
+
+	collection := client.Database(dataBase).Collection(col)
+
+	result, err = collection.Find(context.Background(), filter)
+	return
 }
