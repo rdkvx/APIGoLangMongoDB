@@ -9,21 +9,14 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "client/main.go"
+            "program": "client/client.go"
         },
         {
             "name": "Server",
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "server/main.go"
-        },
-        {
-            "name": "Teste",
-            "type": "go",
-            "request": "launch",
-            "mode": "debug",
-            "program": "testemain.go"
+            "program": "server/server.go"
         },
     ]
 }

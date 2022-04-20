@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "DesafioTecnico/proto";
+
+service upVoteService {
+    rpc CriarNovaCriptoMoeda(NovaCriptoRequest) returns (NovaCriptoResponse) {}
+}
+
+/* message RequestVazio{}
+message ResponseVazio{} */
+
+message NovaCriptoRequest{
+    string name = 1;
+    string symbol = 2;
+}
+
+message NovaCriptoResponse{
+    string id = 1;
+    string name = 2;
+    string symbol = 3;
+    int32 votes = 4;
+    string createdat = 5;
+    string updatedat = 6;
+}
+
+// message GravaNovaRequest {
+//     CriptoMoeda cripto = 1;
+// }
+
+// message AtualizarRequest {
+//     string id = 1;
+//     CriptoMoeda cripto = 2;
+// }
+
+message NovaCriptoResponseV2{
+    CriptoMoeda cripto = 1;
+}
+
+//lista de cripto
+message ListaDeCriptoResponse{
+    repeated CriptoMoeda cripto = 1;
+}
+
+message CriptoMoeda {
+    string id = 1;
+    string nome = 2;
+    string simbolo = 3;
+    int32 votos = 4;
+    string createdat = 5;
+    string updateat = 6;
+}

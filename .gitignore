@@ -1,1 +1,93 @@
 repositorio/conexaoMongo.go
+testemain.go
+database/db/collection-2--1855992821080715022.wt
+database/db/collection-4-1132913339202486220.wt
+database/db/index-3--1855992821080715022.wt
+database/db/index-5-1132913339202486220.wt
+database/db/index-6-1132913339202486220.wt
+database/db/sizeStorer.wt
+database/db/WiredTiger.turtle
+database/db/WiredTiger.wt
+database/db/diagnostic.data/metrics.2022-04-18T13-14-23Z-00000
+database/db/diagnostic.data/metrics.interim
+database/db/journal/WiredTigerLog.0000000003
+database/db/collection-2--1855992821080715022.wt
+database/db/collection-4-1132913339202486220.wt
+database/db/index-3--1855992821080715022.wt
+database/db/index-5-1132913339202486220.wt
+database/db/index-6-1132913339202486220.wt
+database/db/sizeStorer.wt
+database/db/WiredTiger.turtle
+database/db/WiredTiger.wt
+database/db/diagnostic.data/metrics.2022-04-18T13-14-23Z-00000
+database/db/diagnostic.data/metrics.interim
+database/db/journal/WiredTigerLog.0000000003
+database/db/collection-2--1855992821080715022.wt
+database/db/collection-4-1132913339202486220.wt
+database/db/index-3--1855992821080715022.wt
+database/db/index-5-1132913339202486220.wt
+database/db/index-6-1132913339202486220.wt
+database/db/sizeStorer.wt
+database/db/WiredTiger.turtle
+database/db/WiredTiger.wt
+database/db/diagnostic.data/metrics.2022-04-18T13-14-23Z-00000
+database/db/diagnostic.data/metrics.interim
+database/db/journal/WiredTigerLog.0000000003
+database/db/*
+proto/comando
+database/db/_mdb_catalog.wt
+database/db/collection-0--1855992821080715022.wt
+database/db/collection-0-1132913339202486220.wt
+database/db/collection-2--1855992821080715022.wt
+database/db/collection-2-1132913339202486220.wt
+database/db/collection-4-1132913339202486220.wt
+database/db/collection-7-1132913339202486220.wt
+database/db/index-1--1855992821080715022.wt
+database/db/index-1-1132913339202486220.wt
+database/db/index-3--1855992821080715022.wt
+database/db/index-3-1132913339202486220.wt
+database/db/index-5-1132913339202486220.wt
+database/db/index-6-1132913339202486220.wt
+database/db/index-8-1132913339202486220.wt
+database/db/index-9-1132913339202486220.wt
+database/db/mongod.lock
+database/db/sizeStorer.wt
+database/db/WiredTiger.turtle
+database/db/WiredTiger.wt
+database/db/diagnostic.data/metrics.2022-04-18T01-59-13Z-00000
+database/db/diagnostic.data/metrics.2022-04-18T01-59-31Z-00000
+database/db/diagnostic.data/metrics.2022-04-18T13-14-23Z-00000
+database/db/diagnostic.data/metrics.interim
+database/db/journal/WiredTigerLog.0000000003
+database/Nova pasta/db/_mdb_catalog.wt
+database/Nova pasta/db/collection-0--1855992821080715022.wt
+database/Nova pasta/db/collection-0-1132913339202486220.wt
+database/Nova pasta/db/collection-2--1855992821080715022.wt
+database/Nova pasta/db/collection-2-1132913339202486220.wt
+database/Nova pasta/db/collection-4-1132913339202486220.wt
+database/Nova pasta/db/collection-7-1132913339202486220.wt
+database/Nova pasta/db/index-1--1855992821080715022.wt
+database/Nova pasta/db/index-1-1132913339202486220.wt
+database/Nova pasta/db/index-3--1855992821080715022.wt
+database/Nova pasta/db/index-3-1132913339202486220.wt
+database/Nova pasta/db/index-5-1132913339202486220.wt
+database/Nova pasta/db/index-6-1132913339202486220.wt
+database/Nova pasta/db/index-8-1132913339202486220.wt
+database/Nova pasta/db/index-9-1132913339202486220.wt
+database/Nova pasta/db/mongod.lock
+database/Nova pasta/db/sizeStorer.wt
+database/Nova pasta/db/storage.bson
+database/Nova pasta/db/WiredTiger
+database/Nova pasta/db/WiredTiger.lock
+database/Nova pasta/db/WiredTiger.turtle
+database/Nova pasta/db/WiredTiger.wt
+database/Nova pasta/db/WiredTigerHS.wt
+database/Nova pasta/db/diagnostic.data/metrics.2022-04-18T01-59-13Z-00000
+database/Nova pasta/db/diagnostic.data/metrics.2022-04-18T01-59-31Z-00000
+database/Nova pasta/db/diagnostic.data/metrics.2022-04-18T13-14-23Z-00000
+database/Nova pasta/db/diagnostic.data/metrics.2022-04-19T03-22-21Z-00000
+database/Nova pasta/db/diagnostic.data/metrics.interim
+database/Nova pasta/db/journal/WiredTigerLog.0000000003
+database/Nova pasta/db/journal/WiredTigerLog.0000000004
+database/Nova pasta/db/journal/WiredTigerPreplog.0000000001
+database/Nova pasta/db/journal/WiredTigerPreplog.0000000002
