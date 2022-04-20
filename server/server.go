@@ -7,7 +7,6 @@ import (
 	"log"
 	"net"
 
-	"github.com/google/uuid"
 	"google.golang.org/grpc"
 
 	pb "DesafioTecnico/proto"
@@ -27,31 +26,34 @@ type ProtoServer struct {
 
 func (server *ProtoServer) CriarNovaCriptoMoeda(ctx context.Context, request *pb.NovaCriptoRequest) (*pb.NovaCriptoResponse, error) {
 	//Parametros recebidos do request
+	id := request.GetId()
 	nome := request.GetName()
 	simbolo := request.GetSymbol()
+	createdat := time.Now().Format("02/01/2006 15:04:45")
 
 	//Validar valores recebidos. se nao forem validos, retornar error
-	if nome == "" {
-		return &pb.NovaCriptoResponse{}, errors.New("nome informado é inválido")
+	if len(nome) <= 3 {
+		return &pb.NovaCriptoResponse{}, errors.New("NOME INVALIDO")
 	}
 
-	if simbolo == "" {
-		return &pb.NovaCriptoResponse{}, errors.New("símbolo informado é inválido")
+	if len(simbolo) <= 1 {
+		return &pb.NovaCriptoResponse{}, errors.New("SIMBOLO INVALIDO")
 	}
 
-	//Proceguir usando valores válidos recebidos
+	//Prosseguir usando valores válidos recebidos
 	//Listar Valores recebidos no request
-	fmt.Println("Parametros recebidos pela request:")
+	fmt.Print("PARAMETROS RECEBIDOS PELO REQUEST \n\n")
 	fmt.Println("Name: ", nome)
 	fmt.Println("Symbol: ", simbolo)
+	fmt.Println("Created At: ", createdat)
 
 	//Instancia um novo model de cripto que será persistida no banco de dados
 	novaCripto := &model.MoedaCripto{
-		Id:        uuid.NewString(),
+		Id:        id,
 		Nome:      nome,
 		Simbolo:   simbolo,
 		Voto:      0, //valor default é sempre zero para uma nova cripto criada
-		CreatedAT: time.Now().Format("02/01/2006 15:04:45"),
+		CreatedAT: createdat,
 		UpdatedAT: "",
 	}
 
