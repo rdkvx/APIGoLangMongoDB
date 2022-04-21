@@ -3,27 +3,30 @@ package repositorio
 import (
 	"DesafioTecnico/database"
 	"context"
-	"log"
+	//"log"
 
 	m "DesafioTecnico/server/model"
 	"fmt"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	//"google.golang.org/protobuf/internal/errors"
 	"gopkg.in/mgo.v2/bson"
 )
 
 func Create(mc m.CryptoCurrency) error {
-
 	client, ctx, cancel, err := database.Connect(database.Uri())
+
 	if err != nil {
-		panic(err)
+		fmt.Println("ERROR TRYING TO CONNECT AT DB: ", err)
 	}
 
-	_, err = InsertOne(client, ctx, "desafiotecnico", "moedacripto", mc)
+	collection := client.Database("desafiotecnico").Collection("moedacripto")
+
+	_, err = collection.InsertOne(context.Background(), mc)
 
 	if err != nil {
-		fmt.Print("Erro ao inserir, erro: ", err.Error())
+		fmt.Print("FAILED TO INSERT: ", err.Error())
 	}
 
 	defer database.Close(client, ctx, cancel)
@@ -32,8 +35,11 @@ func Create(mc m.CryptoCurrency) error {
 }
 
 func Read(id string) (mc m.CryptoCurrency, err error) {
-
 	client, _, _, err := database.Connect(database.Uri())
+
+	if err != nil {
+		fmt.Println("ERROR TRYING TO CONNECT AT DB: ", err)
+	}
 
 	collection := client.Database("desafiotecnico").Collection("moedacripto")
 
@@ -41,7 +47,7 @@ func Read(id string) (mc m.CryptoCurrency, err error) {
 
 	cur := collection.FindOne(context.Background(), filter)
 	if err != nil {
-		log.Fatal(err)
+		return mc, err
 	}
 
 	var results = m.CryptoCurrency{}
@@ -54,7 +60,6 @@ func Read(id string) (mc m.CryptoCurrency, err error) {
 }
 
 func ReadAll(sortParam string, ascending bool) (obj []m.CryptoCurrency, err error) {
-
 	client, _, _, err := database.Connect(database.Uri())
 
 	if err != nil {
@@ -66,27 +71,27 @@ func ReadAll(sortParam string, ascending bool) (obj []m.CryptoCurrency, err erro
 	var cur *mongo.Cursor
 	findOptions := options.Find()
 
-	if sortParam == "" && !ascending {
-		//retornar a lista no formato padrao
-		cur, err = collection.Find(context.Background(), bson.M{})
+	if sortParam == "" {
+		//Return a list on default order, wich is ordered by creation date asc
+		sortParam = "name"
+		findOptions.SetSort(bson.M{sortParam: 1})
+		cur, err = collection.Find(context.Background(), bson.M{}, findOptions)
 		if err != nil {
-			log.Fatal(err)
+			return obj, err
 		}
-	} else { //lista com ordenacao customizada
-		if sortParam != "" { //se tem parametro valido para ordenar por essa coluna correspondente
-			if ascending { //se ascending = true, trazer no padraao (ascendente)
-				// Sort by `sortParam` field ascending
+	} else { //customizing the list order
+		if sortParam != "" { //if there is a parameter, the order will be by the param received (name, dt, votes, etc).
+			if ascending { //if ascending = true, the return will be the default.
 				findOptions.SetSort(bson.M{sortParam: 1})
 				cur, err = collection.Find(context.Background(), bson.M{}, findOptions)
 				if err != nil {
-					log.Fatal(err)
+					return obj, err
 				}
-			} else {
-				// Sort by `sortParam` field descending
+			} else { // Sort by `sortParam` field descending (higher value first)
 				findOptions.SetSort(bson.M{sortParam: -1})
 				cur, err = collection.Find(context.Background(), bson.M{}, findOptions)
 				if err != nil {
-					log.Fatal(err)
+					return obj, err
 				}
 			}
 		}
@@ -95,17 +100,17 @@ func ReadAll(sortParam string, ascending bool) (obj []m.CryptoCurrency, err erro
 	var results = []m.CryptoCurrency{}
 
 	if err = cur.All(context.Background(), &results); err != nil {
-		return []m.CryptoCurrency{}, err
+		return obj, err
 	}
 
 	return results, err
 }
 
 func Update(mc m.CryptoCurrency) error {
-
 	client, ctx, cancel, err := database.Connect(database.Uri())
+
 	if err != nil {
-		panic(err)
+		fmt.Println("ERROR TRYING TO CONNECT AT DB: ", err)
 	}
 
 	defer database.Close(client, ctx, cancel)
@@ -122,63 +127,28 @@ func Update(mc m.CryptoCurrency) error {
 		},
 	}
 
-	_, err = UpdateOne(client, context.Background(), "desafiotecnico", "moedacripto", filter, update)
+	collection := client.Database("desafiotecnico").Collection("moedacripto")
+	_, err = collection.UpdateOne(context.Background(), filter, update)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	return nil
 }
 
 func Delete(id string) error {
-
 	client, _, _, err := database.Connect(database.Uri())
+
+	if err != nil {
+		fmt.Println("ERROR TRYING TO CONNECT AT DB: ", err)
+	}
 
 	collection := client.Database("desafiotecnico").Collection("moedacripto")
 
 	filter := bson.M{"_id": id}
 
-	cur := collection.FindOneAndDelete(context.Background(), filter)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var results = m.CryptoCurrency{}
-
-	if err = cur.Decode(&results); err != nil {
-
-		return err
-	}
+	collection.FindOneAndDelete(context.Background(), filter)
 
 	return err
-}
-
-func InsertOne(client *mongo.Client, ctx context.Context, dataBase, col string, doc interface{}) (*mongo.InsertOneResult, error) {
-
-	collection := client.Database(dataBase).Collection(col)
-
-	result, err := collection.InsertOne(context.Background(), doc)
-	if err != nil {
-		fmt.Print("Erro ao inserir: ", err)
-	}
-
-	return result, err
-}
-
-func UpdateOne(client *mongo.Client, ctx context.Context, dataBase, col string, filter, update interface{}) (result *mongo.UpdateResult, err error) {
-
-	collection := client.Database(dataBase).Collection(col)
-
-	result, err = collection.UpdateOne(ctx, filter, update)
-
-	return
-}
-
-func Query(client *mongo.Client, ctx context.Context, dataBase, col string, filter, option interface{}) (result *mongo.Cursor, err error) {
-
-	collection := client.Database(dataBase).Collection(col)
-
-	result, err = collection.Find(context.Background(), filter)
-	return
 }

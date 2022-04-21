@@ -10,7 +10,7 @@ func main() {
 	op := true
 	for op {
 
-		switch misc.MenuInicial() {
+		switch misc.MainMenu() {
 		case 1:
 		// 	repo.CreateNewCryptoClient()
 		// case 2:
@@ -26,10 +26,10 @@ func main() {
 		case 0:
 			op = false
 		default:
-			misc.CleanScreen()
+			misc.Clear()
 			fmt.Print("Opcao Invalida")
 			fmt.Scan(&pause)
-			misc.CleanScreen()
+			misc.Clear()
 		}
 	}
 }

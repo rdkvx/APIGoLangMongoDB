@@ -21,7 +21,7 @@ package repositorio
 
 // 	pause := ""
 
-// 	misc.CleanScreen()
+// 	misc.Clear()
 // 	mc := m.MoedaCripto{}
 
 // 	fmt.Print("CRIANDO NOVA MOEDA\n\n")
@@ -34,19 +34,19 @@ package repositorio
 
 // 	mc.CreatedAT = time.Now().Format("02/01/2006 15:04:45")
 
-// 	misc.CleanScreen()
+// 	misc.Clear()
 
 // 	response, err := client.Create(contexto, &pb.NewCryptoRequest{Name: mc.Name, Symbol: mc.Symbol})
 // 	if err != nil {
 // 		log.Fatalf("ERRO AO GRAVAR CRIPTO: %v", err)
 // 	} else {
-// 		misc.CleanScreen()
+// 		misc.Clear()
 // 		fmt.Println("CRIPTO GRAVADA COM SUCESSO!")
 // 		fmt.Println("NAME: ", response.Name)
 // 		fmt.Println("SYMBOL: ", response.GetSymbol())
 // 		fmt.Println("CREATED AT: ", response.GetCreatedat())
 // 		fmt.Scan(&pause)
-// 		misc.CleanScreen()
+// 		misc.Clear()
 // 	}
 // }
 
@@ -62,7 +62,7 @@ package repositorio
 // }
 // */
 // func EditingACryptoClient() {
-// 	misc.CleanScreen()
+// 	misc.Clear()
 // 	tempID := ""
 // 	pause := ""
 
@@ -71,7 +71,7 @@ package repositorio
 
 // 	res, err := SearchingACryptoAPI(tempID)
 // 	if err != nil {
-// 		misc.CleanScreen()
+// 		misc.Clear()
 // 		fmt.Println("ID INVALIDO")
 // 		fmt.Scan(&pause)
 // 	} else {
@@ -103,7 +103,7 @@ package repositorio
 // }
 
 // func DeletingACryptoClient() {
-// 	misc.CleanScreen()
+// 	misc.Clear()
 // 	tempID := ""
 // 	pause := ""
 
@@ -112,22 +112,22 @@ package repositorio
 
 // 	res, err := SearchingACryptoAPI(tempID)
 // 	if err != nil {
-// 		misc.CleanScreen()
+// 		misc.Clear()
 // 		fmt.Print("ID INVALIDO")
 // 		fmt.Scan(&pause)
-// 		misc.CleanScreen()
+// 		misc.Clear()
 // 	} else {
 // 		err = DeletingACryptoAPI(res.Id)
 // 		if err != nil {
-// 			misc.CleanScreen()
+// 			misc.Clear()
 // 			fmt.Println("ERRO AO DELETAR CRIPTO! ", err)
 // 			fmt.Scan(&pause)
-// 			misc.CleanScreen()
+// 			misc.Clear()
 // 		} else {
-// 			misc.CleanScreen()
+// 			misc.Clear()
 // 			fmt.Println("CRIPTO ", res.Name, " DELETADA COM SUCESSO")
 // 			fmt.Scan(&pause)
-// 			misc.CleanScreen()
+// 			misc.Clear()
 // 		}
 // 	}
 
@@ -162,30 +162,30 @@ package repositorio
 // 	tempID := ""
 // 	pause := ""
 
-// 	misc.CleanScreen()
+// 	misc.Clear()
 // 	fmt.Print("INFORME O ID DA MOEDA: ")
 // 	fmt.Scan(&tempID)
 
 // 	res, err := SearchingACryptoAPI(tempID)
 
 // 	if err != nil {
-// 		misc.CleanScreen()
+// 		misc.Clear()
 // 		fmt.Println("ID INVALIDO!")
 // 		fmt.Scan(&pause)
-// 		misc.CleanScreen()
+// 		misc.Clear()
 
 // 	} else {
 // 		mc, err := UpVoteAPI(res.Id)
 
 // 		if err == nil {
-// 			misc.CleanScreen()
+// 			misc.Clear()
 // 			fmt.Println("VOTE REGISTRED")
 // 			fmt.Println("UPDATED INFOS!")
 // 			fmt.Println("")
 // 			fmt.Println("NAME : ", mc.Name)
 // 			fmt.Println("VOTES: ", mc.Votes)
 // 			fmt.Scan(&pause)
-// 			misc.CleanScreen()
+// 			misc.Clear()
 // 		} else {
 // 			fmt.Println("ERROR REGISTERING VOTE!")
 // 			panic(err)
@@ -221,30 +221,30 @@ package repositorio
 // 	tempID := ""
 // 	pause := ""
 
-// 	misc.CleanScreen()
+// 	misc.Clear()
 // 	fmt.Print("INFORME O ID DA MOEDA: ")
 // 	fmt.Scan(&tempID)
 
 // 	res, err := SearchingACryptoAPI(tempID)
 
 // 	if err != nil {
-// 		misc.CleanScreen()
+// 		misc.Clear()
 // 		fmt.Println("ID INVALIDO!")
 // 		fmt.Scan(&pause)
-// 		misc.CleanScreen()
+// 		misc.Clear()
 
 // 	} else {
 // 		mc, err := DownVoteAPI(res.Id)
 
 // 		if err == nil {
-// 			misc.CleanScreen()
+// 			misc.Clear()
 // 			fmt.Println("VOTES REGISTERED")
 // 			fmt.Println("UPDATED INFOS!")
 // 			fmt.Println("")
 // 			fmt.Println("NAME : ", mc.Name)
 // 			fmt.Println("VOTES: ", mc.Votes)
 // 			fmt.Scan(&pause)
-// 			misc.CleanScreen()
+// 			misc.Clear()
 // 		} else {
 // 			fmt.Println("ERROR REGISTERING VOTE!")
 // 			panic(err)
@@ -271,7 +271,7 @@ package repositorio
 
 // 	cur, err := collection.Find(context.Background(), bson.M{})
 // 	if err != nil {
-// 		log.Fatal(err)
+// 		return err
 // 	}
 
 // 	var results = []m.MoedaCripto{}
@@ -291,7 +291,7 @@ package repositorio
 // 		fmt.Println("ERROR TRYING TO LIST CRYPTOS")
 // 		fmt.Scan(&pause)
 // 	} else {
-// 		misc.CleanScreen()
+// 		misc.Clear()
 // 		for i, elemento := range mc {
 // 			fmt.Println("")
 // 			fmt.Println("CRYPTO ", i+1)
@@ -300,6 +300,6 @@ package repositorio
 // 			fmt.Println("VOTOS: ", elemento.Votes)
 // 		}
 // 		fmt.Scan(&pause)
-// 		misc.CleanScreen()
+// 		misc.Clear()
 // 	}
 // }

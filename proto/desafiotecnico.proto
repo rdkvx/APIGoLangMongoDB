@@ -4,50 +4,62 @@ package proto;
 
 option go_package = "DesafioTecnico/proto";
 
-service upVoteService {
-    rpc CriarNovaCriptoMoeda(NovaCriptoRequest) returns (NovaCriptoResponse) {}
+service CryptoService {
+    rpc Create(NewCryptoRequest) returns (Cryptocurrency) {}
+    rpc Edit(EditCryptoRequest) returns (Cryptocurrency) {}
+    rpc Delete(DeleteCryptoRequest) returns (EmptyResponse) {}
+    rpc Find(FindRequest) returns (Cryptocurrency) {}
+    rpc List(ListCryptosRequest) returns (ListCryptosResponse) {}
+    rpc Upvote(VoteRequest) returns (EmptyResponse) {}
+    rpc Downvote(VoteRequest) returns (EmptyResponse) {}
+    rpc Subscribe(SubscriptionRequest) returns (stream Cryptocurrency) {}
 }
 
-/* message RequestVazio{}
-message ResponseVazio{} */
+message EmptyResponse{}
 
-message NovaCriptoRequest{
-    string name = 1;
-    string symbol = 2;
-}
+message EmptyRequest{}
 
-message NovaCriptoResponse{
+message Cryptocurrency {
     string id = 1;
     string name = 2;
     string symbol = 3;
     int32 votes = 4;
     string createdat = 5;
-    string updatedat = 6;
-}
-
-// message GravaNovaRequest {
-//     CriptoMoeda cripto = 1;
-// }
-
-// message AtualizarRequest {
-//     string id = 1;
-//     CriptoMoeda cripto = 2;
-// }
-
-message NovaCriptoResponseV2{
-    CriptoMoeda cripto = 1;
-}
-
-//lista de cripto
-message ListaDeCriptoResponse{
-    repeated CriptoMoeda cripto = 1;
-}
-
-message CriptoMoeda {
-    string id = 1;
-    string nome = 2;
-    string simbolo = 3;
-    int32 votos = 4;
-    string createdat = 5;
     string updateat = 6;
+}
+
+message ListCryptosRequest {
+    string sortparam = 1;
+    bool ascending = 2;
+}
+
+message ListCryptosResponse {
+    repeated Cryptocurrency crypto = 1;
+}
+
+message NewCryptoRequest {
+    string name = 1;
+    string symbol = 2;
+}
+
+message EditCryptoRequest {
+    string id = 1;
+    string name = 2;
+    string symbol = 3;
+}
+
+message DeleteCryptoRequest {
+    string id = 1;
+}
+
+message VoteRequest {
+    string id = 1;
+}
+
+message SubscriptionRequest {
+    string id = 1;
+}
+
+message FindRequest {
+    string id = 1;
 }

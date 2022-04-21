@@ -5,7 +5,7 @@ import (
 	//"DesafioTecnico/server/model"
 )
 
-func MenuInicial() int {
+func MainMenu() int {
 	op := 0
 
 	fmt.Println("\nDESAFIO TECNICO")
@@ -23,10 +23,10 @@ func MenuInicial() int {
 
 }
 
-func CleanScreen() {
+func Clear() {
 	fmt.Println("\033[2J")
 }
 
-func PulaLinha() {
+func SkipLine() {
 	fmt.Print("\n\n")
 }

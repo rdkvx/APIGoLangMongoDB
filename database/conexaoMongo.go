@@ -23,7 +23,7 @@ func Close(client *mongo.Client, ctx context.Context, cancel context.CancelFunc)
 	defer func() {
 
 		if err := client.Disconnect(ctx); err != nil {
-			panic(err)
+			fmt.Println("FAILED TO CLOSE CONNECTION: ",err)
 		}
 	}()
 }
