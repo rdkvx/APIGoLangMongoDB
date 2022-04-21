@@ -283,7 +283,7 @@ func (server *CryptoServer) List(ctx context.Context, request *pb.ListCryptosReq
 
 func (server *CryptoServer) Upvote(ctx context.Context, request *pb.VoteRequest) (*pb.EmptyResponse, error) {
 	id := request.GetId()
-	
+
 	misc.SkipLine()
 	fmt.Println("----------------------------------------")
 	fmt.Print("PARAMETERS RECEIVED BY THE REQUEST \n\n")
@@ -301,8 +301,8 @@ func (server *CryptoServer) Upvote(ctx context.Context, request *pb.VoteRequest)
 		return &pb.EmptyResponse{}, errors.New("FAILED TO VOTE: CRYPTO NOT FOUND")
 	}
 
-	//incrmenta o voto
-	res.Votes = res.Votes + 1
+	//increment a vote
+	res.Votes++
 
 	err = repo.Update(res)
 	if err != nil {
@@ -313,6 +313,8 @@ func (server *CryptoServer) Upvote(ctx context.Context, request *pb.VoteRequest)
 	fmt.Println("NAME: ", res.Name)
 	fmt.Println("TOTAL VOTES: ", res.Votes)
 
+	//A observer from datastream, if the ID that you defined on subscribe method
+	//is the same beeing updated, the observer will send a alert to the stream.
 	observer <- id
 
 	return &pb.EmptyResponse{}, nil
@@ -320,7 +322,7 @@ func (server *CryptoServer) Upvote(ctx context.Context, request *pb.VoteRequest)
 
 func (server *CryptoServer) Downvote(ctx context.Context, request *pb.VoteRequest) (*pb.EmptyResponse, error) {
 	id := request.GetId()
-	
+
 	misc.SkipLine()
 	fmt.Println("----------------------------------------")
 	fmt.Print("PARAMETERS RECEIVED BY THE REQUEST \n\n")
@@ -338,8 +340,8 @@ func (server *CryptoServer) Downvote(ctx context.Context, request *pb.VoteReques
 		return &pb.EmptyResponse{}, errors.New("FAILED TO VOTE: CRYPTO NOT FOUND")
 	}
 
-	//incrmenta o voto
-	res.Votes = res.Votes - 1
+	//decrement a vote
+	res.Votes--
 
 	err = repo.Update(res)
 	if err != nil {
@@ -350,21 +352,26 @@ func (server *CryptoServer) Downvote(ctx context.Context, request *pb.VoteReques
 	fmt.Println("NAME: ", res.Name)
 	fmt.Println("TOTAL VOTES: ", res.Votes)
 
+	//A observer from datastream, if the ID that you defined on subscribe method
+	//is the same beeing updated, the observer will send a alert to the stream.
 	observer <- id
 
 	return &pb.EmptyResponse{}, nil
 }
 
+//Streaming watch method
 func (server *CryptoServer) Subscribe(request *pb.SubscriptionRequest, stream pb.CryptoService_SubscribeServer) error {
 	keepActive := true
 
+	//keep the stream running
 	for keepActive {
-		cryptoUpdatedId := <-observer
+		cryptoUpdatedId := <-observer //the ID is now beeing watched by the channel observer
 
 		if cryptoUpdatedId == request.Id {
 			cryptoFound, err := repo.Read(cryptoUpdatedId)
 			if err != nil {
-				fmt.Println("Unable to stream changes in crypto from Id: ", cryptoUpdatedId)
+				fmt.Println("UNABLE TO STREAM CHANGES IN CRYPTO FROM ID: ", cryptoUpdatedId)
+				return nil
 			}
 
 			err = stream.Send(&pb.Cryptocurrency{

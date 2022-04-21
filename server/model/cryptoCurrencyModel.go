@@ -1,6 +1,6 @@
 package model
 
-//Model MoedaCripto para ser usada na aplicacao
+//Model cryptocurrency to be used on the application
 type CryptoCurrency struct {
 	Id        string `json:"id" bson:"_id"`
 	Name      string `json:"name" bson:"name"`

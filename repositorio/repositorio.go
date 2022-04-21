@@ -2,15 +2,12 @@ package repositorio
 
 import (
 	"DesafioTecnico/database"
-	"context"
-	//"log"
-
 	m "DesafioTecnico/server/model"
+	"context"
 	"fmt"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	//"google.golang.org/protobuf/internal/errors"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -45,6 +42,8 @@ func Read(id string) (mc m.CryptoCurrency, err error) {
 
 	filter := bson.M{"_id": id}
 
+	//return a pointer that brings a object
+	//corresponding to the id passed by parameters.
 	cur := collection.FindOne(context.Background(), filter)
 	if err != nil {
 		return mc, err
@@ -71,23 +70,23 @@ func ReadAll(sortParam string, ascending bool) (obj []m.CryptoCurrency, err erro
 	var cur *mongo.Cursor
 	findOptions := options.Find()
 
-	if sortParam == "" {
-		//Return a list on default order, wich is ordered by creation date asc
+	if sortParam == "" || (sortParam != "id" && sortParam != "name" && sortParam != "symbol" && sortParam != "votes" && sortParam != "createdat" && sortParam != "updatedat") {
+		//Return a list on default order, wich is ordered by name asc
 		sortParam = "name"
 		findOptions.SetSort(bson.M{sortParam: 1})
 		cur, err = collection.Find(context.Background(), bson.M{}, findOptions)
 		if err != nil {
 			return obj, err
 		}
-	} else { //customizing the list order
-		if sortParam != "" { //if there is a parameter, the order will be by the param received (name, dt, votes, etc).
-			if ascending { //if ascending = true, the return will be the default.
+	} else { //Customizing the list order
+		if sortParam != "" { //If there is a parameter, the order will be by the param received (name, dt, votes, etc).
+			if ascending { //If ascending = true, the return will be the default.
 				findOptions.SetSort(bson.M{sortParam: 1})
 				cur, err = collection.Find(context.Background(), bson.M{}, findOptions)
 				if err != nil {
 					return obj, err
 				}
-			} else { // Sort by `sortParam` field descending (higher value first)
+			} else { //Sort by `sortParam` field descending (higher value first)
 				findOptions.SetSort(bson.M{sortParam: -1})
 				cur, err = collection.Find(context.Background(), bson.M{}, findOptions)
 				if err != nil {

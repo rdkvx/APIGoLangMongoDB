@@ -1,15 +1,13 @@
 package database
 
 import (
-	//"DesafioTecnico/server/model"
-
 	"context"
 	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	//"gopkg.in/mgo.v2/bson"
+	
 )
 
 func Uri() (conexao string) {

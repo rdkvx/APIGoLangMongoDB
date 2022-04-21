@@ -2,7 +2,7 @@ package model
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-//models para serem usados exclusivamente pelo streaming do mongo
+//models to be used exclusively on mongoDB.
 type DbEvent struct {
 	DocumentKey   documentKey `bson:"documentKey"`
 	OperationType string      `bson:"operationType"`
