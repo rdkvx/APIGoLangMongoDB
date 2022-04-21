@@ -52,6 +52,30 @@ func Read(id string) (mc m.MoedaCripto, err error) {
 	return results, err
 }
 
+func ReadAll() (obj []m.MoedaCripto, err error) {
+	
+	client, _, _, err := database.Connect(database.Uri())
+
+	if err != nil {
+		fmt.Println("ERROR TRYING TO CONNECT AT DB: ", err)
+	}
+
+	collection := client.Database("desafiotecnico").Collection("moedacripto")
+
+	cur, err := collection.Find(context.Background(), bson.M{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var results = []m.MoedaCripto{}
+
+	if err = cur.All(context.Background(), &results); err != nil {
+		return []m.MoedaCripto{}, err
+	}
+
+	return results, err
+}
+
 func Update(mc m.MoedaCripto) error {
 
 	client, ctx, cancel, err := database.Connect(database.Uri())
@@ -64,8 +88,8 @@ func Update(mc m.MoedaCripto) error {
 	filter := bson.M{"_id": bson.M{"$eq": mc.Id}}
 
 	update := bson.M{
-		"$set": bson.M{"name": mc.Nome,
-			"symbol":    mc.Simbolo,
+		"$set": bson.M{"name": mc.Name,
+			"symbol":    mc.Symbol,
 			"updatedat": mc.UpdatedAT,
 		},
 	}

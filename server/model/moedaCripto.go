@@ -7,23 +7,23 @@ import (
 
 type MoedaCripto struct {
 	Id        string `json:"id" bson:"_id"`
-	Nome      string `json:"name" bson:"name"`
-	Simbolo   string `json:"symbol" bson:"symbol"`
-	Voto      int    `json:"votes" bson:"votes"`
+	Name      string `json:"name" bson:"name"`
+	Symbol    string `json:"symbol" bson:"symbol"`
+	Votes     int    `json:"votes" bson:"votes"`
 	CreatedAT string `json:"createdat" bson:"createdat"`
 	UpdatedAT string `json:"updatedat" bson:"updatedat"`
 }
 
 func FeedbackEditarCriptoMoeda(mc MoedaCripto) {
 	pause := ""
-	misc.Limpatela()
-	fmt.Println("MOEDA ATUALIZADA COM SUCESSO")
-	fmt.Println("INFORMACOES ATUALIZADAS!")
+	misc.CleanScreen()
+	fmt.Println("CRYPTO UPDATED SUCCESSFULLY")
+	fmt.Println("UPDATED INFOS!")
 	fmt.Println("")
-	fmt.Println("NOME: ", mc.Nome)
-	fmt.Println("SIMBOLO: ", mc.Simbolo)
-	fmt.Println("DATA DE CRIACAO: ", mc.CreatedAT)
-	fmt.Println("DATA DA ATUALIZACAO: ", mc.UpdatedAT)
+	fmt.Println("NAME: ", mc.Name)
+	fmt.Println("SYMBOL: ", mc.Symbol)
+	fmt.Println("CREATION DATE: ", mc.CreatedAT)
+	fmt.Println("UPDATED INFO DATE: ", mc.UpdatedAT)
 	fmt.Scan(&pause)
-	misc.Limpatela()
+	misc.CleanScreen()
 }

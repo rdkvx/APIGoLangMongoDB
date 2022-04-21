@@ -22,7 +22,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UpVoteServiceClient interface {
-	CriarNovaCriptoMoeda(ctx context.Context, in *NovaCriptoRequest, opts ...grpc.CallOption) (*NovaCriptoResponse, error)
+	CreateACrypto(ctx context.Context, in *RequestNewCrypto, opts ...grpc.CallOption) (*ResponseNewCrypto, error)
+	EditACrypto(ctx context.Context, in *RequestEditCrypto, opts ...grpc.CallOption) (*ResponseEditCrypto, error)
+	DeleteACrypto(ctx context.Context, in *RequestDeleteCrypto, opts ...grpc.CallOption) (*ResponseDeleteCrypto, error)
+	ListAllCryptos(ctx context.Context, in *RequestListAllCryptos, opts ...grpc.CallOption) (*ResponseListAllCryptos, error)
 }
 
 type upVoteServiceClient struct {
@@ -33,9 +36,36 @@ func NewUpVoteServiceClient(cc grpc.ClientConnInterface) UpVoteServiceClient {
 	return &upVoteServiceClient{cc}
 }
 
-func (c *upVoteServiceClient) CriarNovaCriptoMoeda(ctx context.Context, in *NovaCriptoRequest, opts ...grpc.CallOption) (*NovaCriptoResponse, error) {
-	out := new(NovaCriptoResponse)
-	err := c.cc.Invoke(ctx, "/proto.upVoteService/CriarNovaCriptoMoeda", in, out, opts...)
+func (c *upVoteServiceClient) CreateACrypto(ctx context.Context, in *RequestNewCrypto, opts ...grpc.CallOption) (*ResponseNewCrypto, error) {
+	out := new(ResponseNewCrypto)
+	err := c.cc.Invoke(ctx, "/proto.upVoteService/CreateACrypto", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *upVoteServiceClient) EditACrypto(ctx context.Context, in *RequestEditCrypto, opts ...grpc.CallOption) (*ResponseEditCrypto, error) {
+	out := new(ResponseEditCrypto)
+	err := c.cc.Invoke(ctx, "/proto.upVoteService/EditACrypto", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *upVoteServiceClient) DeleteACrypto(ctx context.Context, in *RequestDeleteCrypto, opts ...grpc.CallOption) (*ResponseDeleteCrypto, error) {
+	out := new(ResponseDeleteCrypto)
+	err := c.cc.Invoke(ctx, "/proto.upVoteService/DeleteACrypto", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *upVoteServiceClient) ListAllCryptos(ctx context.Context, in *RequestListAllCryptos, opts ...grpc.CallOption) (*ResponseListAllCryptos, error) {
+	out := new(ResponseListAllCryptos)
+	err := c.cc.Invoke(ctx, "/proto.upVoteService/ListAllCryptos", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +76,10 @@ func (c *upVoteServiceClient) CriarNovaCriptoMoeda(ctx context.Context, in *Nova
 // All implementations must embed UnimplementedUpVoteServiceServer
 // for forward compatibility
 type UpVoteServiceServer interface {
-	CriarNovaCriptoMoeda(context.Context, *NovaCriptoRequest) (*NovaCriptoResponse, error)
+	CreateACrypto(context.Context, *RequestNewCrypto) (*ResponseNewCrypto, error)
+	EditACrypto(context.Context, *RequestEditCrypto) (*ResponseEditCrypto, error)
+	DeleteACrypto(context.Context, *RequestDeleteCrypto) (*ResponseDeleteCrypto, error)
+	ListAllCryptos(context.Context, *RequestListAllCryptos) (*ResponseListAllCryptos, error)
 	mustEmbedUnimplementedUpVoteServiceServer()
 }
 
@@ -54,8 +87,17 @@ type UpVoteServiceServer interface {
 type UnimplementedUpVoteServiceServer struct {
 }
 
-func (UnimplementedUpVoteServiceServer) CriarNovaCriptoMoeda(context.Context, *NovaCriptoRequest) (*NovaCriptoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CriarNovaCriptoMoeda not implemented")
+func (UnimplementedUpVoteServiceServer) CreateACrypto(context.Context, *RequestNewCrypto) (*ResponseNewCrypto, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateACrypto not implemented")
+}
+func (UnimplementedUpVoteServiceServer) EditACrypto(context.Context, *RequestEditCrypto) (*ResponseEditCrypto, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditACrypto not implemented")
+}
+func (UnimplementedUpVoteServiceServer) DeleteACrypto(context.Context, *RequestDeleteCrypto) (*ResponseDeleteCrypto, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteACrypto not implemented")
+}
+func (UnimplementedUpVoteServiceServer) ListAllCryptos(context.Context, *RequestListAllCryptos) (*ResponseListAllCryptos, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAllCryptos not implemented")
 }
 func (UnimplementedUpVoteServiceServer) mustEmbedUnimplementedUpVoteServiceServer() {}
 
@@ -70,20 +112,74 @@ func RegisterUpVoteServiceServer(s grpc.ServiceRegistrar, srv UpVoteServiceServe
 	s.RegisterService(&UpVoteService_ServiceDesc, srv)
 }
 
-func _UpVoteService_CriarNovaCriptoMoeda_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NovaCriptoRequest)
+func _UpVoteService_CreateACrypto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestNewCrypto)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UpVoteServiceServer).CriarNovaCriptoMoeda(ctx, in)
+		return srv.(UpVoteServiceServer).CreateACrypto(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.upVoteService/CriarNovaCriptoMoeda",
+		FullMethod: "/proto.upVoteService/CreateACrypto",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UpVoteServiceServer).CriarNovaCriptoMoeda(ctx, req.(*NovaCriptoRequest))
+		return srv.(UpVoteServiceServer).CreateACrypto(ctx, req.(*RequestNewCrypto))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UpVoteService_EditACrypto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestEditCrypto)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UpVoteServiceServer).EditACrypto(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.upVoteService/EditACrypto",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UpVoteServiceServer).EditACrypto(ctx, req.(*RequestEditCrypto))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UpVoteService_DeleteACrypto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestDeleteCrypto)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UpVoteServiceServer).DeleteACrypto(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.upVoteService/DeleteACrypto",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UpVoteServiceServer).DeleteACrypto(ctx, req.(*RequestDeleteCrypto))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UpVoteService_ListAllCryptos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestListAllCryptos)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UpVoteServiceServer).ListAllCryptos(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.upVoteService/ListAllCryptos",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UpVoteServiceServer).ListAllCryptos(ctx, req.(*RequestListAllCryptos))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -96,8 +192,20 @@ var UpVoteService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*UpVoteServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CriarNovaCriptoMoeda",
-			Handler:    _UpVoteService_CriarNovaCriptoMoeda_Handler,
+			MethodName: "CreateACrypto",
+			Handler:    _UpVoteService_CreateACrypto_Handler,
+		},
+		{
+			MethodName: "EditACrypto",
+			Handler:    _UpVoteService_EditACrypto_Handler,
+		},
+		{
+			MethodName: "DeleteACrypto",
+			Handler:    _UpVoteService_DeleteACrypto_Handler,
+		},
+		{
+			MethodName: "ListAllCryptos",
+			Handler:    _UpVoteService_ListAllCryptos_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

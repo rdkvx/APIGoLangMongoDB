@@ -23,7 +23,7 @@ func MenuInicial() int {
 
 }
 
-func Limpatela() {
+func CleanScreen() {
 	fmt.Println("\033[2J")
 }
 

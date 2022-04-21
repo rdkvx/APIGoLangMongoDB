@@ -13,24 +13,24 @@ func main() {
 
 		switch misc.MenuInicial() {
 		case 1:
-			repo.CriarNovaCriptoMoedaClient()
+			repo.CreateNewCryptoClient()
 		case 2:
-			repo.EditaCriptoMoedaClient()
+			repo.EditingACryptoClient()
 		case 3:
-			repo.DeletarCriptoMoedaClient()
+			repo.DeletingACryptoClient()
 		case 4:
 			repo.UpVoteClient()
 		case 5:
 			repo.DownVoteClient()
 		case 6:
-			repo.ListarCriptoMoedasClient()
+			repo.ListCryptosClient()
 		case 0:
 			op = false
 		default:
-			misc.Limpatela()
+			misc.CleanScreen()
 			fmt.Print("Opcao Invalida")
 			fmt.Scan(&pause)
-			misc.Limpatela()
+			misc.CleanScreen()
 		}
 	}
 }
