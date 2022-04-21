@@ -18,232 +18,368 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// UpVoteServiceClient is the client API for UpVoteService service.
+// CryptoServiceClient is the client API for CryptoService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UpVoteServiceClient interface {
-	CreateACrypto(ctx context.Context, in *RequestNewCrypto, opts ...grpc.CallOption) (*ResponseNewCrypto, error)
-	EditACrypto(ctx context.Context, in *RequestEditCrypto, opts ...grpc.CallOption) (*ResponseEditCrypto, error)
-	DeleteACrypto(ctx context.Context, in *RequestDeleteCrypto, opts ...grpc.CallOption) (*ResponseDeleteCrypto, error)
-	ListAllCryptosOrderedByVoteDesc(ctx context.Context, in *RequestListAllCryptos, opts ...grpc.CallOption) (*ResponseListAllCryptos, error)
-	ListAllCryptosOrderedByVoteAsc(ctx context.Context, in *RequestListAllCryptos, opts ...grpc.CallOption) (*ResponseListAllCryptos, error)
+type CryptoServiceClient interface {
+	Create(ctx context.Context, in *NewCryptoRequest, opts ...grpc.CallOption) (*Cryptocurrency, error)
+	Edit(ctx context.Context, in *EditCryptoRequest, opts ...grpc.CallOption) (*Cryptocurrency, error)
+	Delete(ctx context.Context, in *DeleteCryptoRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Find(ctx context.Context, in *FindRequest, opts ...grpc.CallOption) (*Cryptocurrency, error)
+	List(ctx context.Context, in *ListCryptosRequest, opts ...grpc.CallOption) (*ListCryptosResponse, error)
+	Upvote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Downvote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Subscribe(ctx context.Context, in *SubscriptionRequest, opts ...grpc.CallOption) (CryptoService_SubscribeClient, error)
 }
 
-type upVoteServiceClient struct {
+type cryptoServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUpVoteServiceClient(cc grpc.ClientConnInterface) UpVoteServiceClient {
-	return &upVoteServiceClient{cc}
+func NewCryptoServiceClient(cc grpc.ClientConnInterface) CryptoServiceClient {
+	return &cryptoServiceClient{cc}
 }
 
-func (c *upVoteServiceClient) CreateACrypto(ctx context.Context, in *RequestNewCrypto, opts ...grpc.CallOption) (*ResponseNewCrypto, error) {
-	out := new(ResponseNewCrypto)
-	err := c.cc.Invoke(ctx, "/proto.upVoteService/CreateACrypto", in, out, opts...)
+func (c *cryptoServiceClient) Create(ctx context.Context, in *NewCryptoRequest, opts ...grpc.CallOption) (*Cryptocurrency, error) {
+	out := new(Cryptocurrency)
+	err := c.cc.Invoke(ctx, "/proto.CryptoService/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *upVoteServiceClient) EditACrypto(ctx context.Context, in *RequestEditCrypto, opts ...grpc.CallOption) (*ResponseEditCrypto, error) {
-	out := new(ResponseEditCrypto)
-	err := c.cc.Invoke(ctx, "/proto.upVoteService/EditACrypto", in, out, opts...)
+func (c *cryptoServiceClient) Edit(ctx context.Context, in *EditCryptoRequest, opts ...grpc.CallOption) (*Cryptocurrency, error) {
+	out := new(Cryptocurrency)
+	err := c.cc.Invoke(ctx, "/proto.CryptoService/Edit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *upVoteServiceClient) DeleteACrypto(ctx context.Context, in *RequestDeleteCrypto, opts ...grpc.CallOption) (*ResponseDeleteCrypto, error) {
-	out := new(ResponseDeleteCrypto)
-	err := c.cc.Invoke(ctx, "/proto.upVoteService/DeleteACrypto", in, out, opts...)
+func (c *cryptoServiceClient) Delete(ctx context.Context, in *DeleteCryptoRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, "/proto.CryptoService/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *upVoteServiceClient) ListAllCryptosOrderedByVoteDesc(ctx context.Context, in *RequestListAllCryptos, opts ...grpc.CallOption) (*ResponseListAllCryptos, error) {
-	out := new(ResponseListAllCryptos)
-	err := c.cc.Invoke(ctx, "/proto.upVoteService/ListAllCryptosOrderedByVoteDesc", in, out, opts...)
+func (c *cryptoServiceClient) Find(ctx context.Context, in *FindRequest, opts ...grpc.CallOption) (*Cryptocurrency, error) {
+	out := new(Cryptocurrency)
+	err := c.cc.Invoke(ctx, "/proto.CryptoService/Find", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *upVoteServiceClient) ListAllCryptosOrderedByVoteAsc(ctx context.Context, in *RequestListAllCryptos, opts ...grpc.CallOption) (*ResponseListAllCryptos, error) {
-	out := new(ResponseListAllCryptos)
-	err := c.cc.Invoke(ctx, "/proto.upVoteService/ListAllCryptosOrderedByVoteAsc", in, out, opts...)
+func (c *cryptoServiceClient) List(ctx context.Context, in *ListCryptosRequest, opts ...grpc.CallOption) (*ListCryptosResponse, error) {
+	out := new(ListCryptosResponse)
+	err := c.cc.Invoke(ctx, "/proto.CryptoService/List", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UpVoteServiceServer is the server API for UpVoteService service.
-// All implementations must embed UnimplementedUpVoteServiceServer
+func (c *cryptoServiceClient) Upvote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, "/proto.CryptoService/Upvote", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cryptoServiceClient) Downvote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, "/proto.CryptoService/Downvote", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cryptoServiceClient) Subscribe(ctx context.Context, in *SubscriptionRequest, opts ...grpc.CallOption) (CryptoService_SubscribeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &CryptoService_ServiceDesc.Streams[0], "/proto.CryptoService/Subscribe", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &cryptoServiceSubscribeClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type CryptoService_SubscribeClient interface {
+	Recv() (*Cryptocurrency, error)
+	grpc.ClientStream
+}
+
+type cryptoServiceSubscribeClient struct {
+	grpc.ClientStream
+}
+
+func (x *cryptoServiceSubscribeClient) Recv() (*Cryptocurrency, error) {
+	m := new(Cryptocurrency)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// CryptoServiceServer is the server API for CryptoService service.
+// All implementations must embed UnimplementedCryptoServiceServer
 // for forward compatibility
-type UpVoteServiceServer interface {
-	CreateACrypto(context.Context, *RequestNewCrypto) (*ResponseNewCrypto, error)
-	EditACrypto(context.Context, *RequestEditCrypto) (*ResponseEditCrypto, error)
-	DeleteACrypto(context.Context, *RequestDeleteCrypto) (*ResponseDeleteCrypto, error)
-	ListAllCryptosOrderedByVoteDesc(context.Context, *RequestListAllCryptos) (*ResponseListAllCryptos, error)
-	ListAllCryptosOrderedByVoteAsc(context.Context, *RequestListAllCryptos) (*ResponseListAllCryptos, error)
-	mustEmbedUnimplementedUpVoteServiceServer()
+type CryptoServiceServer interface {
+	Create(context.Context, *NewCryptoRequest) (*Cryptocurrency, error)
+	Edit(context.Context, *EditCryptoRequest) (*Cryptocurrency, error)
+	Delete(context.Context, *DeleteCryptoRequest) (*EmptyResponse, error)
+	Find(context.Context, *FindRequest) (*Cryptocurrency, error)
+	List(context.Context, *ListCryptosRequest) (*ListCryptosResponse, error)
+	Upvote(context.Context, *VoteRequest) (*EmptyResponse, error)
+	Downvote(context.Context, *VoteRequest) (*EmptyResponse, error)
+	Subscribe(*SubscriptionRequest, CryptoService_SubscribeServer) error
+	mustEmbedUnimplementedCryptoServiceServer()
 }
 
-// UnimplementedUpVoteServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedUpVoteServiceServer struct {
+// UnimplementedCryptoServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedCryptoServiceServer struct {
 }
 
-func (UnimplementedUpVoteServiceServer) CreateACrypto(context.Context, *RequestNewCrypto) (*ResponseNewCrypto, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateACrypto not implemented")
+func (UnimplementedCryptoServiceServer) Create(context.Context, *NewCryptoRequest) (*Cryptocurrency, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedUpVoteServiceServer) EditACrypto(context.Context, *RequestEditCrypto) (*ResponseEditCrypto, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EditACrypto not implemented")
+func (UnimplementedCryptoServiceServer) Edit(context.Context, *EditCryptoRequest) (*Cryptocurrency, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Edit not implemented")
 }
-func (UnimplementedUpVoteServiceServer) DeleteACrypto(context.Context, *RequestDeleteCrypto) (*ResponseDeleteCrypto, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteACrypto not implemented")
+func (UnimplementedCryptoServiceServer) Delete(context.Context, *DeleteCryptoRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedUpVoteServiceServer) ListAllCryptosOrderedByVoteDesc(context.Context, *RequestListAllCryptos) (*ResponseListAllCryptos, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListAllCryptosOrderedByVoteDesc not implemented")
+func (UnimplementedCryptoServiceServer) Find(context.Context, *FindRequest) (*Cryptocurrency, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Find not implemented")
 }
-func (UnimplementedUpVoteServiceServer) ListAllCryptosOrderedByVoteAsc(context.Context, *RequestListAllCryptos) (*ResponseListAllCryptos, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListAllCryptosOrderedByVoteAsc not implemented")
+func (UnimplementedCryptoServiceServer) List(context.Context, *ListCryptosRequest) (*ListCryptosResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedUpVoteServiceServer) mustEmbedUnimplementedUpVoteServiceServer() {}
+func (UnimplementedCryptoServiceServer) Upvote(context.Context, *VoteRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Upvote not implemented")
+}
+func (UnimplementedCryptoServiceServer) Downvote(context.Context, *VoteRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Downvote not implemented")
+}
+func (UnimplementedCryptoServiceServer) Subscribe(*SubscriptionRequest, CryptoService_SubscribeServer) error {
+	return status.Errorf(codes.Unimplemented, "method Subscribe not implemented")
+}
+func (UnimplementedCryptoServiceServer) mustEmbedUnimplementedCryptoServiceServer() {}
 
-// UnsafeUpVoteServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UpVoteServiceServer will
+// UnsafeCryptoServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CryptoServiceServer will
 // result in compilation errors.
-type UnsafeUpVoteServiceServer interface {
-	mustEmbedUnimplementedUpVoteServiceServer()
+type UnsafeCryptoServiceServer interface {
+	mustEmbedUnimplementedCryptoServiceServer()
 }
 
-func RegisterUpVoteServiceServer(s grpc.ServiceRegistrar, srv UpVoteServiceServer) {
-	s.RegisterService(&UpVoteService_ServiceDesc, srv)
+func RegisterCryptoServiceServer(s grpc.ServiceRegistrar, srv CryptoServiceServer) {
+	s.RegisterService(&CryptoService_ServiceDesc, srv)
 }
 
-func _UpVoteService_CreateACrypto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestNewCrypto)
+func _CryptoService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewCryptoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UpVoteServiceServer).CreateACrypto(ctx, in)
+		return srv.(CryptoServiceServer).Create(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.upVoteService/CreateACrypto",
+		FullMethod: "/proto.CryptoService/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UpVoteServiceServer).CreateACrypto(ctx, req.(*RequestNewCrypto))
+		return srv.(CryptoServiceServer).Create(ctx, req.(*NewCryptoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UpVoteService_EditACrypto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestEditCrypto)
+func _CryptoService_Edit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditCryptoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UpVoteServiceServer).EditACrypto(ctx, in)
+		return srv.(CryptoServiceServer).Edit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.upVoteService/EditACrypto",
+		FullMethod: "/proto.CryptoService/Edit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UpVoteServiceServer).EditACrypto(ctx, req.(*RequestEditCrypto))
+		return srv.(CryptoServiceServer).Edit(ctx, req.(*EditCryptoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UpVoteService_DeleteACrypto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestDeleteCrypto)
+func _CryptoService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCryptoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UpVoteServiceServer).DeleteACrypto(ctx, in)
+		return srv.(CryptoServiceServer).Delete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.upVoteService/DeleteACrypto",
+		FullMethod: "/proto.CryptoService/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UpVoteServiceServer).DeleteACrypto(ctx, req.(*RequestDeleteCrypto))
+		return srv.(CryptoServiceServer).Delete(ctx, req.(*DeleteCryptoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UpVoteService_ListAllCryptosOrderedByVoteDesc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestListAllCryptos)
+func _CryptoService_Find_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UpVoteServiceServer).ListAllCryptosOrderedByVoteDesc(ctx, in)
+		return srv.(CryptoServiceServer).Find(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.upVoteService/ListAllCryptosOrderedByVoteDesc",
+		FullMethod: "/proto.CryptoService/Find",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UpVoteServiceServer).ListAllCryptosOrderedByVoteDesc(ctx, req.(*RequestListAllCryptos))
+		return srv.(CryptoServiceServer).Find(ctx, req.(*FindRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UpVoteService_ListAllCryptosOrderedByVoteAsc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestListAllCryptos)
+func _CryptoService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCryptosRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UpVoteServiceServer).ListAllCryptosOrderedByVoteAsc(ctx, in)
+		return srv.(CryptoServiceServer).List(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.upVoteService/ListAllCryptosOrderedByVoteAsc",
+		FullMethod: "/proto.CryptoService/List",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UpVoteServiceServer).ListAllCryptosOrderedByVoteAsc(ctx, req.(*RequestListAllCryptos))
+		return srv.(CryptoServiceServer).List(ctx, req.(*ListCryptosRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// UpVoteService_ServiceDesc is the grpc.ServiceDesc for UpVoteService service.
+func _CryptoService_Upvote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CryptoServiceServer).Upvote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.CryptoService/Upvote",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CryptoServiceServer).Upvote(ctx, req.(*VoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CryptoService_Downvote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CryptoServiceServer).Downvote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.CryptoService/Downvote",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CryptoServiceServer).Downvote(ctx, req.(*VoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CryptoService_Subscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SubscriptionRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(CryptoServiceServer).Subscribe(m, &cryptoServiceSubscribeServer{stream})
+}
+
+type CryptoService_SubscribeServer interface {
+	Send(*Cryptocurrency) error
+	grpc.ServerStream
+}
+
+type cryptoServiceSubscribeServer struct {
+	grpc.ServerStream
+}
+
+func (x *cryptoServiceSubscribeServer) Send(m *Cryptocurrency) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+// CryptoService_ServiceDesc is the grpc.ServiceDesc for CryptoService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UpVoteService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.upVoteService",
-	HandlerType: (*UpVoteServiceServer)(nil),
+var CryptoService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.CryptoService",
+	HandlerType: (*CryptoServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateACrypto",
-			Handler:    _UpVoteService_CreateACrypto_Handler,
+			MethodName: "Create",
+			Handler:    _CryptoService_Create_Handler,
 		},
 		{
-			MethodName: "EditACrypto",
-			Handler:    _UpVoteService_EditACrypto_Handler,
+			MethodName: "Edit",
+			Handler:    _CryptoService_Edit_Handler,
 		},
 		{
-			MethodName: "DeleteACrypto",
-			Handler:    _UpVoteService_DeleteACrypto_Handler,
+			MethodName: "Delete",
+			Handler:    _CryptoService_Delete_Handler,
 		},
 		{
-			MethodName: "ListAllCryptosOrderedByVoteDesc",
-			Handler:    _UpVoteService_ListAllCryptosOrderedByVoteDesc_Handler,
+			MethodName: "Find",
+			Handler:    _CryptoService_Find_Handler,
 		},
 		{
-			MethodName: "ListAllCryptosOrderedByVoteAsc",
-			Handler:    _UpVoteService_ListAllCryptosOrderedByVoteAsc_Handler,
+			MethodName: "List",
+			Handler:    _CryptoService_List_Handler,
+		},
+		{
+			MethodName: "Upvote",
+			Handler:    _CryptoService_Upvote_Handler,
+		},
+		{
+			MethodName: "Downvote",
+			Handler:    _CryptoService_Downvote_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Subscribe",
+			Handler:       _CryptoService_Subscribe_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "desafiotecnico.proto",
 }

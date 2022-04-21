@@ -13,13 +13,13 @@ const (
 	enderecoDoServidor = "localhost:50051"
 )
 
-func ConectaServidor() (*grpc.ClientConn, pb.UpVoteServiceClient, context.Context, context.CancelFunc) {
+func ConectaServidor() (*grpc.ClientConn, pb.CryptoServiceClient, context.Context, context.CancelFunc) {
 	conexao, err := grpc.Dial(enderecoDoServidor, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("error ao conectar ao servidor %v", err)
 	}
 
-	client := pb.NewUpVoteServiceClient(conexao)
+	client := pb.NewCryptoServiceClient(conexao)
 
 	contexto, cancel := context.WithTimeout(context.Background(), time.Second*60)
 

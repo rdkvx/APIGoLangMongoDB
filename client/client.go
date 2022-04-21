@@ -2,7 +2,6 @@ package main
 
 import (
 	"DesafioTecnico/client/misc"
-	repo "DesafioTecnico/repositorio"
 	"fmt"
 )
 
@@ -13,17 +12,17 @@ func main() {
 
 		switch misc.MenuInicial() {
 		case 1:
-			repo.CreateNewCryptoClient()
-		case 2:
-			repo.EditingACryptoClient()
-		case 3:
-			repo.DeletingACryptoClient()
-		case 4:
-			repo.UpVoteClient()
-		case 5:
-			repo.DownVoteClient()
-		case 6:
-			repo.ListCryptosClient()
+		// 	repo.CreateNewCryptoClient()
+		// case 2:
+		// 	repo.EditingACryptoClient()
+		// case 3:
+		// 	repo.DeletingACryptoClient()
+		// case 4:
+		// 	repo.UpVoteClient()
+		// case 5:
+		// 	repo.DownVoteClient()
+		// case 6:
+		// 	repo.ListCryptosClient()
 		case 0:
 			op = false
 		default:

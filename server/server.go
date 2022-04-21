@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"sort"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
@@ -23,11 +22,13 @@ var (
 	port string = ":50051"
 )
 
-type ProtoServer struct {
-	pb.UnimplementedUpVoteServiceServer
+type CryptoServer struct {
+	pb.UnimplementedCryptoServiceServer
 }
 
-func (server *ProtoServer) CreateACrypto(ctx context.Context, request *pb.RequestNewCrypto) (*pb.ResponseNewCrypto, error) {
+var observer chan string
+
+func (server *CryptoServer) Create(ctx context.Context, request *pb.NewCryptoRequest) (*pb.Cryptocurrency, error) {
 	//Parametros recebidos do request
 	id := uuid.NewString()
 	name := request.GetName()
@@ -36,11 +37,11 @@ func (server *ProtoServer) CreateACrypto(ctx context.Context, request *pb.Reques
 
 	//Validar valores recebidos. se nao forem validos, retornar error
 	if len(name) <= 3 || name == "" {
-		return &pb.ResponseNewCrypto{}, errors.New("INVALID NAME, MUST HAVE AT LEAST 3 CHARACTERS")
+		return &pb.Cryptocurrency{}, errors.New("INVALID NAME, MUST HAVE AT LEAST 3 CHARACTERS")
 	}
 
 	if len(symbol) <= 2 || len(symbol) >= 5 {
-		return &pb.ResponseNewCrypto{}, errors.New("INVALID SYMBOL, ONLY 3 OR 4 CHARACTERS ALLOWED")
+		return &pb.Cryptocurrency{}, errors.New("INVALID SYMBOL, ONLY 3 OR 4 CHARACTERS ALLOWED")
 	}
 
 	//Prosseguir usando valores válidos recebidos
@@ -52,7 +53,7 @@ func (server *ProtoServer) CreateACrypto(ctx context.Context, request *pb.Reques
 	fmt.Println("")
 
 	//Instancia um novo model de cripto que será persistida no banco de dados
-	newCrypto := &model.MoedaCripto{
+	newCrypto := &model.CryptoCurrency{
 		Id:        id,
 		Name:      name,
 		Symbol:    symbol,
@@ -65,7 +66,7 @@ func (server *ProtoServer) CreateACrypto(ctx context.Context, request *pb.Reques
 	fmt.Println("CREATING A CRYPTO.......")
 	err := repo.Create(*newCrypto)
 	if err != nil {
-		return &pb.ResponseNewCrypto{}, err
+		return &pb.Cryptocurrency{}, err
 	}
 
 	//Print the new crypto
@@ -79,19 +80,17 @@ func (server *ProtoServer) CreateACrypto(ctx context.Context, request *pb.Reques
 	misc.PulaLinha()
 
 	//if everythings gone right, return the new crypto object
-	return &pb.ResponseNewCrypto{
-		ResponseCripto: &pb.CryptoCoin{
-			Id:        newCrypto.Id,
-			Name:      newCrypto.Name,
-			Symbol:    newCrypto.Symbol,
-			Votes:     int32(newCrypto.Votes),
-			Createdat: newCrypto.CreatedAT,
-			Updateat:  newCrypto.UpdatedAT,
-		},
+	return &pb.Cryptocurrency{
+		Id:        newCrypto.Id,
+		Name:      newCrypto.Name,
+		Symbol:    newCrypto.Symbol,
+		Votes:     int32(newCrypto.Votes),
+		Createdat: newCrypto.CreatedAT,
+		Updateat:  newCrypto.UpdatedAT,
 	}, nil
 }
 
-func (server *ProtoServer) EditACrypto(ctx context.Context, request *pb.RequestEditCrypto) (*pb.ResponseEditCrypto, error) {
+func (server *CryptoServer) Edit(ctx context.Context, request *pb.EditCryptoRequest) (*pb.Cryptocurrency, error) {
 	id := request.GetId()
 	name := request.GetName()
 	symbol := request.GetSymbol()
@@ -99,11 +98,11 @@ func (server *ProtoServer) EditACrypto(ctx context.Context, request *pb.RequestE
 
 	//Validar valores recebidos. se nao forem validos, retornar error
 	if len(name) < 3 || name == "" {
-		return &pb.ResponseEditCrypto{}, errors.New("INVALID NAME, MUST HAVE AT LEAST 3 CHARACTERS")
+		return &pb.Cryptocurrency{}, errors.New("INVALID NAME, MUST HAVE AT LEAST 3 CHARACTERS")
 	}
 
 	if len(symbol) < 3 || len(symbol) > 4 {
-		return &pb.ResponseEditCrypto{}, errors.New("INVALID SYMBOL, ONLY 3 OR 4 CHARACTERS ALLOWED")
+		return &pb.Cryptocurrency{}, errors.New("INVALID SYMBOL, ONLY 3 OR 4 CHARACTERS ALLOWED")
 	}
 
 	//Go on with valid inputs
@@ -119,7 +118,7 @@ func (server *ProtoServer) EditACrypto(ctx context.Context, request *pb.RequestE
 
 	if err != nil {
 		fmt.Println("ERROR TRYING TO UPDATE CRYPTO: INVALID ID")
-		return &pb.ResponseEditCrypto{}, nil
+		return &pb.Cryptocurrency{}, nil
 	} else {
 		res.Name = name
 		res.Symbol = symbol
@@ -141,125 +140,168 @@ func (server *ProtoServer) EditACrypto(ctx context.Context, request *pb.RequestE
 	fmt.Println("UPDATED AT: ", res.UpdatedAT)
 	misc.PulaLinha()
 
-	return &pb.ResponseEditCrypto{
-		ResponseCripto: &pb.CryptoCoin{
-			Id:        res.Id,
-			Name:      res.Name,
-			Symbol:    res.Symbol,
-			Votes:     int32(res.Votes),
-			Createdat: res.CreatedAT,
-			Updateat:  res.UpdatedAT,
-		},
+	observer <- id
+
+	return &pb.Cryptocurrency{
+		Id:        res.Id,
+		Name:      res.Name,
+		Symbol:    res.Symbol,
+		Votes:     int32(res.Votes),
+		Createdat: res.CreatedAT,
+		Updateat:  res.UpdatedAT,
 	}, nil
 }
 
-func (server *ProtoServer) DeleteACrypto(ctx context.Context, request *pb.RequestDeleteCrypto) (*pb.ResponseDeleteCrypto, error) {
+func (server *CryptoServer) Delete(ctx context.Context, request *pb.DeleteCryptoRequest) (*pb.EmptyResponse, error) {
+	//validar se recebeu um id mesmo
 	id := request.GetId()
 
-	err := repo.Delete(id)
 	misc.PulaLinha()
 	fmt.Println("----------------------------------------")
 	fmt.Print("PARAMETERS RECEIVED BY THE REQUEST \n\n")
 	fmt.Println("ID: ", id)
+
+	//deletar no banco
+	err := repo.Delete(id)
 	if err != nil {
 		fmt.Println("FAILED TO DELETE A CRYPTO! CHECK THE ID PROVIDED")
 	} else {
 		fmt.Println("CRYPTO DELETED SUCCESSFULLY")
 	}
 
-	return &pb.ResponseDeleteCrypto{}, nil
+	return &pb.EmptyResponse{}, nil
 }
 
-func (server *ProtoServer) ListAllCryptosOrderedByVoteDesc(ctx context.Context, request *pb.RequestListAllCryptos) (*pb.ResponseListAllCryptos, error) {
+func (server *CryptoServer) Find(ctx context.Context, request *pb.FindRequest) (*pb.Cryptocurrency, error) {
+	id := request.GetId()
 
-	res, err := repo.ReadAll()
-
-	fmt.Println("----------------------------------------")
-	fmt.Println("")
+	cryptoFound, err := repo.Read(id)
 	if err != nil {
-		return &pb.ResponseListAllCryptos{}, errors.New("FAILED TO LIST CRYPTOS")
+		return &pb.Cryptocurrency{}, err
 	}
 
-	list := []*pb.CryptoCoin{}
-
-	//get the data saved on DB and move it to a Proto List
-	for _, element := range res {
-		newobj := &pb.CryptoCoin{}
-		newobj.Id = element.Id
-		newobj.Name = element.Name
-		newobj.Symbol = element.Symbol
-		newobj.Votes = int32(element.Votes)
-		newobj.Createdat = element.CreatedAT
-		newobj.Updateat = element.CreatedAT
-		list = append(list, newobj)
-	}
-
-	//Print the Crypto List
-	fmt.Println("CRYPTO LIST")
-	misc.PulaLinha()
-	for _, element := range list {
-		fmt.Println("NAME: ", element.Name)
-		fmt.Println("SYMBOL: ", element.Symbol)
-		fmt.Println("VOTES: ", element.Votes)
-		fmt.Println("CREATED AT: ", element.Createdat)
-		fmt.Println("UPDATED AT: ", element.Updateat)
-		misc.PulaLinha()
-	}
-
-	sort.Slice(list, func(i, j int) bool {
-		return list[i].Votes > list[j].Votes
-	})
-
-	return &pb.ResponseListAllCryptos{
-		ResponseCripto: list,
+	return &pb.Cryptocurrency{
+		Id:        cryptoFound.Id,
+		Name:      cryptoFound.Name,
+		Symbol:    cryptoFound.Symbol,
+		Votes:     int32(cryptoFound.Votes),
+		Createdat: cryptoFound.CreatedAT,
+		Updateat:  cryptoFound.UpdatedAT,
 	}, nil
 }
 
-func (server *ProtoServer) ListAllCryptosOrderedByVoteAsc(ctx context.Context, request *pb.RequestListAllCryptos) (*pb.ResponseListAllCryptos, error) {
+func (server *CryptoServer) List(ctx context.Context, request *pb.ListCryptosRequest) (*pb.ListCryptosResponse, error) {
+	//Pegar valores recebidos no request
+	sortParam := request.GetSortparam()
+	ascending := request.GetAscending()
 
-	res, err := repo.ReadAll()
-
-	fmt.Println("----------------------------------------")
-	fmt.Println("")
+	//pega a collection de model crypto do mongodb
+	cryptoList, err := repo.ReadAll(sortParam, ascending)
 	if err != nil {
-		return &pb.ResponseListAllCryptos{}, errors.New("FAILED TO LIST CRYPTOS")
+		return &pb.ListCryptosResponse{}, errors.New("FAILED TO LIST CRYPTOS")
 	}
 
-	list := []*pb.CryptoCoin{}
+	//cria uma list de crypto protobuf pra ser retornada pelo método
+	cryptoPbList := []*pb.Cryptocurrency{}
 
-	//get the data saved on DB and move it to a Proto List
-	for _, element := range res {
-		newobj := &pb.CryptoCoin{}
-		newobj.Id = element.Id
-		newobj.Name = element.Name
-		newobj.Symbol = element.Symbol
-		newobj.Votes = int32(element.Votes)
-		newobj.Createdat = element.CreatedAT
-		newobj.Updateat = element.CreatedAT
-		list = append(list, newobj)
+	//itera na lista do mongo para converter o modelo do go pro modelo do protobuf
+	for _, element := range cryptoList {
+		newobj := &pb.Cryptocurrency{
+			Id:        element.Id,
+			Name:      element.Name,
+			Symbol:    element.Symbol,
+			Votes:     int32(element.Votes),
+			Createdat: element.CreatedAT,
+			Updateat:  element.CreatedAT,
+		}
+
+		//concatena o elemento iterado na lista de retorno
+		cryptoPbList = append(cryptoPbList, newobj)
 	}
 
-	fmt.Println("final list: ", list)
-
-	//Print the Crypto Llist
-	fmt.Println("CRYPTO LIST")
-	misc.PulaLinha()
-	for _, element := range list {
-		fmt.Println("NAME: ", element.Name)
-		fmt.Println("SYMBOL: ", element.Symbol)
-		fmt.Println("VOTES: ", element.Votes)
-		fmt.Println("CREATED AT: ", element.Createdat)
-		fmt.Println("UPDATED AT: ", element.Updateat)
-		misc.PulaLinha()
-	}
-
-	sort.Slice(list, func(i, j int) bool {
-		return list[i].Votes < list[j].Votes
-	})
-
-	return &pb.ResponseListAllCryptos{
-		ResponseCripto: list,
+	//retorna o resultado
+	return &pb.ListCryptosResponse{
+		Crypto: cryptoPbList,
 	}, nil
+}
+
+func (server *CryptoServer) Upvote(ctx context.Context, request *pb.VoteRequest) (*pb.EmptyResponse, error) {
+	//pega o id pra inscrementar o voto
+	cryptoId := request.GetId()
+	if cryptoId == "" {
+		return &pb.EmptyResponse{}, errors.New("invalid Id")
+	}
+
+	res, err := repo.Read(cryptoId)
+	if err != nil {
+		return &pb.EmptyResponse{}, errors.New("crypto not found")
+	}
+
+	//incrmenta o voto
+	res.Votes = res.Votes + 1
+
+	err = repo.Update(res)
+	if err != nil {
+		return &pb.EmptyResponse{}, nil
+	}
+
+	observer <- cryptoId
+
+	return &pb.EmptyResponse{}, nil
+}
+
+func (server *CryptoServer) Downvote(ctx context.Context, request *pb.VoteRequest) (*pb.EmptyResponse, error) {
+	//pega o id pra inscrementar o voto
+	cryptoId := request.GetId()
+	if cryptoId == "" {
+		return &pb.EmptyResponse{}, errors.New("invalid Id")
+	}
+
+	res, err := repo.Read(cryptoId)
+	if err != nil {
+		return &pb.EmptyResponse{}, errors.New("crypto not found")
+	}
+
+	//incrmenta o voto
+	res.Votes = res.Votes - 1
+
+	err = repo.Update(res)
+	if err != nil {
+		return &pb.EmptyResponse{}, nil
+	}
+
+	observer <- cryptoId
+
+	return &pb.EmptyResponse{}, nil
+}
+
+func (server *CryptoServer) Subscribe(request *pb.SubscriptionRequest, stream pb.CryptoService_SubscribeServer) error {
+	keepActive := true
+
+	for keepActive {
+		cryptoUpdatedId := <-observer
+
+		if cryptoUpdatedId == request.Id {
+			cryptoFound, err := repo.Read(cryptoUpdatedId)
+			if err != nil {
+				fmt.Println("Unable to stream changes in crypto from Id: ", cryptoUpdatedId)
+			}
+
+			err = stream.Send(&pb.Cryptocurrency{
+				Id:        cryptoFound.Id,
+				Name:      cryptoFound.Name,
+				Symbol:    cryptoFound.Symbol,
+				Votes:     int32(cryptoFound.Votes),
+				Createdat: cryptoFound.CreatedAT,
+				Updateat:  cryptoFound.UpdatedAT,
+			})
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+	}
+
+	return nil
 }
 
 func main() {
@@ -268,8 +310,10 @@ func main() {
 		fmt.Println("FAILED TO LISTEN ON PORT: ", port, "ERROR: ", err)
 	}
 
+	observer = make(chan string)
+
 	s := grpc.NewServer()
-	pb.RegisterUpVoteServiceServer(s, &ProtoServer{})
+	pb.RegisterCryptoServiceServer(s, &CryptoServer{})
 	misc.CleanScreen()
 	fmt.Println("SERVER LISTENING AT ", lis.Addr())
 	misc.PulaLinha()

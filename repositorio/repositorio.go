@@ -9,10 +9,11 @@ import (
 	"fmt"
 
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"gopkg.in/mgo.v2/bson"
 )
 
-func Create(mc m.MoedaCripto) error {
+func Create(mc m.CryptoCurrency) error {
 
 	client, ctx, cancel, err := database.Connect(database.Uri())
 	if err != nil {
@@ -30,7 +31,7 @@ func Create(mc m.MoedaCripto) error {
 	return err
 }
 
-func Read(id string) (mc m.MoedaCripto, err error) {
+func Read(id string) (mc m.CryptoCurrency, err error) {
 
 	client, _, _, err := database.Connect(database.Uri())
 
@@ -43,7 +44,7 @@ func Read(id string) (mc m.MoedaCripto, err error) {
 		log.Fatal(err)
 	}
 
-	var results = m.MoedaCripto{}
+	var results = m.CryptoCurrency{}
 
 	if err = cur.Decode(&results); err != nil {
 		return results, err
@@ -52,8 +53,8 @@ func Read(id string) (mc m.MoedaCripto, err error) {
 	return results, err
 }
 
-func ReadAll() (obj []m.MoedaCripto, err error) {
-	
+func ReadAll(sortParam string, ascending bool) (obj []m.CryptoCurrency, err error) {
+
 	client, _, _, err := database.Connect(database.Uri())
 
 	if err != nil {
@@ -62,21 +63,45 @@ func ReadAll() (obj []m.MoedaCripto, err error) {
 
 	collection := client.Database("desafiotecnico").Collection("moedacripto")
 
-	cur, err := collection.Find(context.Background(), bson.M{})
-	if err != nil {
-		log.Fatal(err)
+	var cur *mongo.Cursor
+	findOptions := options.Find()
+
+	if sortParam == "" && !ascending {
+		//retornar a lista no formato padrao
+		cur, err = collection.Find(context.Background(), bson.M{})
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else { //lista com ordenacao customizada
+		if sortParam != "" { //se tem parametro valido para ordenar por essa coluna correspondente
+			if ascending { //se ascending = true, trazer no padraao (ascendente)
+				// Sort by `sortParam` field ascending
+				findOptions.SetSort(bson.M{sortParam: 1})
+				cur, err = collection.Find(context.Background(), bson.M{}, findOptions)
+				if err != nil {
+					log.Fatal(err)
+				}
+			} else {
+				// Sort by `sortParam` field descending
+				findOptions.SetSort(bson.M{sortParam: -1})
+				cur, err = collection.Find(context.Background(), bson.M{}, findOptions)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+		}
 	}
 
-	var results = []m.MoedaCripto{}
+	var results = []m.CryptoCurrency{}
 
 	if err = cur.All(context.Background(), &results); err != nil {
-		return []m.MoedaCripto{}, err
+		return []m.CryptoCurrency{}, err
 	}
 
 	return results, err
 }
 
-func Update(mc m.MoedaCripto) error {
+func Update(mc m.CryptoCurrency) error {
 
 	client, ctx, cancel, err := database.Connect(database.Uri())
 	if err != nil {
@@ -88,8 +113,11 @@ func Update(mc m.MoedaCripto) error {
 	filter := bson.M{"_id": bson.M{"$eq": mc.Id}}
 
 	update := bson.M{
-		"$set": bson.M{"name": mc.Name,
+		"$set": bson.M{
+			"name":      mc.Name,
 			"symbol":    mc.Symbol,
+			"votes":     mc.Votes,
+			"createdat": mc.CreatedAT,
 			"updatedat": mc.UpdatedAT,
 		},
 	}
@@ -116,7 +144,7 @@ func Delete(id string) error {
 		log.Fatal(err)
 	}
 
-	var results = m.MoedaCripto{}
+	var results = m.CryptoCurrency{}
 
 	if err = cur.Decode(&results); err != nil {
 
