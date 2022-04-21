@@ -25,7 +25,8 @@ type UpVoteServiceClient interface {
 	CreateACrypto(ctx context.Context, in *RequestNewCrypto, opts ...grpc.CallOption) (*ResponseNewCrypto, error)
 	EditACrypto(ctx context.Context, in *RequestEditCrypto, opts ...grpc.CallOption) (*ResponseEditCrypto, error)
 	DeleteACrypto(ctx context.Context, in *RequestDeleteCrypto, opts ...grpc.CallOption) (*ResponseDeleteCrypto, error)
-	ListAllCryptos(ctx context.Context, in *RequestListAllCryptos, opts ...grpc.CallOption) (*ResponseListAllCryptos, error)
+	ListAllCryptosOrderedByVoteDesc(ctx context.Context, in *RequestListAllCryptos, opts ...grpc.CallOption) (*ResponseListAllCryptos, error)
+	ListAllCryptosOrderedByVoteAsc(ctx context.Context, in *RequestListAllCryptos, opts ...grpc.CallOption) (*ResponseListAllCryptos, error)
 }
 
 type upVoteServiceClient struct {
@@ -63,9 +64,18 @@ func (c *upVoteServiceClient) DeleteACrypto(ctx context.Context, in *RequestDele
 	return out, nil
 }
 
-func (c *upVoteServiceClient) ListAllCryptos(ctx context.Context, in *RequestListAllCryptos, opts ...grpc.CallOption) (*ResponseListAllCryptos, error) {
+func (c *upVoteServiceClient) ListAllCryptosOrderedByVoteDesc(ctx context.Context, in *RequestListAllCryptos, opts ...grpc.CallOption) (*ResponseListAllCryptos, error) {
 	out := new(ResponseListAllCryptos)
-	err := c.cc.Invoke(ctx, "/proto.upVoteService/ListAllCryptos", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.upVoteService/ListAllCryptosOrderedByVoteDesc", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *upVoteServiceClient) ListAllCryptosOrderedByVoteAsc(ctx context.Context, in *RequestListAllCryptos, opts ...grpc.CallOption) (*ResponseListAllCryptos, error) {
+	out := new(ResponseListAllCryptos)
+	err := c.cc.Invoke(ctx, "/proto.upVoteService/ListAllCryptosOrderedByVoteAsc", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +89,8 @@ type UpVoteServiceServer interface {
 	CreateACrypto(context.Context, *RequestNewCrypto) (*ResponseNewCrypto, error)
 	EditACrypto(context.Context, *RequestEditCrypto) (*ResponseEditCrypto, error)
 	DeleteACrypto(context.Context, *RequestDeleteCrypto) (*ResponseDeleteCrypto, error)
-	ListAllCryptos(context.Context, *RequestListAllCryptos) (*ResponseListAllCryptos, error)
+	ListAllCryptosOrderedByVoteDesc(context.Context, *RequestListAllCryptos) (*ResponseListAllCryptos, error)
+	ListAllCryptosOrderedByVoteAsc(context.Context, *RequestListAllCryptos) (*ResponseListAllCryptos, error)
 	mustEmbedUnimplementedUpVoteServiceServer()
 }
 
@@ -96,8 +107,11 @@ func (UnimplementedUpVoteServiceServer) EditACrypto(context.Context, *RequestEdi
 func (UnimplementedUpVoteServiceServer) DeleteACrypto(context.Context, *RequestDeleteCrypto) (*ResponseDeleteCrypto, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteACrypto not implemented")
 }
-func (UnimplementedUpVoteServiceServer) ListAllCryptos(context.Context, *RequestListAllCryptos) (*ResponseListAllCryptos, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListAllCryptos not implemented")
+func (UnimplementedUpVoteServiceServer) ListAllCryptosOrderedByVoteDesc(context.Context, *RequestListAllCryptos) (*ResponseListAllCryptos, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAllCryptosOrderedByVoteDesc not implemented")
+}
+func (UnimplementedUpVoteServiceServer) ListAllCryptosOrderedByVoteAsc(context.Context, *RequestListAllCryptos) (*ResponseListAllCryptos, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAllCryptosOrderedByVoteAsc not implemented")
 }
 func (UnimplementedUpVoteServiceServer) mustEmbedUnimplementedUpVoteServiceServer() {}
 
@@ -166,20 +180,38 @@ func _UpVoteService_DeleteACrypto_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UpVoteService_ListAllCryptos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UpVoteService_ListAllCryptosOrderedByVoteDesc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RequestListAllCryptos)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UpVoteServiceServer).ListAllCryptos(ctx, in)
+		return srv.(UpVoteServiceServer).ListAllCryptosOrderedByVoteDesc(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.upVoteService/ListAllCryptos",
+		FullMethod: "/proto.upVoteService/ListAllCryptosOrderedByVoteDesc",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UpVoteServiceServer).ListAllCryptos(ctx, req.(*RequestListAllCryptos))
+		return srv.(UpVoteServiceServer).ListAllCryptosOrderedByVoteDesc(ctx, req.(*RequestListAllCryptos))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UpVoteService_ListAllCryptosOrderedByVoteAsc_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestListAllCryptos)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UpVoteServiceServer).ListAllCryptosOrderedByVoteAsc(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.upVoteService/ListAllCryptosOrderedByVoteAsc",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UpVoteServiceServer).ListAllCryptosOrderedByVoteAsc(ctx, req.(*RequestListAllCryptos))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -204,8 +236,12 @@ var UpVoteService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UpVoteService_DeleteACrypto_Handler,
 		},
 		{
-			MethodName: "ListAllCryptos",
-			Handler:    _UpVoteService_ListAllCryptos_Handler,
+			MethodName: "ListAllCryptosOrderedByVoteDesc",
+			Handler:    _UpVoteService_ListAllCryptosOrderedByVoteDesc_Handler,
+		},
+		{
+			MethodName: "ListAllCryptosOrderedByVoteAsc",
+			Handler:    _UpVoteService_ListAllCryptosOrderedByVoteAsc_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

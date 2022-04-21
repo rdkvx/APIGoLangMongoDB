@@ -68,7 +68,7 @@ func (server *ProtoServer) CreateACrypto(ctx context.Context, request *pb.Reques
 		return &pb.ResponseNewCrypto{}, err
 	}
 
-	//Imprimir a nova cripto gravada
+	//Print the new crypto
 	fmt.Println("CRYPTO CREATED SUCCESSFULLY")
 	fmt.Println()
 	fmt.Println("NAME: ", newCrypto.Name)
@@ -77,9 +77,8 @@ func (server *ProtoServer) CreateACrypto(ctx context.Context, request *pb.Reques
 	fmt.Println("CREATED AT: ", newCrypto.CreatedAT)
 	fmt.Println("UPDATED AT: ", newCrypto.UpdatedAT)
 	misc.PulaLinha()
-	
 
-	//Se deu certo, retornar um response com essa cripto gerada
+	//if everythings gone right, return the new crypto object
 	return &pb.ResponseNewCrypto{
 		ResponseCripto: &pb.CryptoCoin{
 			Id:        newCrypto.Id,
@@ -107,18 +106,15 @@ func (server *ProtoServer) EditACrypto(ctx context.Context, request *pb.RequestE
 		return &pb.ResponseEditCrypto{}, errors.New("INVALID SYMBOL, ONLY 3 OR 4 CHARACTERS ALLOWED")
 	}
 
-	//Prosseguir usando valores válidos recebidos
-	//Listar Valores recebidos no request
-	
+	//Go on with valid inputs
+	//List the request values
+
 	fmt.Println("----------------------------------------")
 	fmt.Print("PARAMETERS RECEIVED BY THE REQUEST \n\n")
 	fmt.Println("Name: ", name)
-	fmt.Println("Symbol: ",symbol)
+	fmt.Println("Symbol: ", symbol)
 	fmt.Println("")
-	
 
-	
-	
 	res, err := repo.Read(id)
 
 	if err != nil {
@@ -135,16 +131,15 @@ func (server *ProtoServer) EditACrypto(ctx context.Context, request *pb.RequestE
 		log.Panic("ERROR TRYING TO EDITING CRYPTO ", err)
 	}
 
-		//Imprimir a nova cripto gravada
-		fmt.Println("CRYPTO UPDATED SUCCESSFULLY")
-		misc.PulaLinha()
-		fmt.Println("NAME: ", res.Name)
-		fmt.Println("SYMBOL: ", res.Symbol)
-		fmt.Println("VOTES: ", res.Votes)
-		fmt.Println("CREATED AT: ", res.CreatedAT)
-		fmt.Println("UPDATED AT: ", res.UpdatedAT)
-		misc.PulaLinha()
-	
+	//Print the new Crypto
+	fmt.Println("CRYPTO UPDATED SUCCESSFULLY")
+	misc.PulaLinha()
+	fmt.Println("NAME: ", res.Name)
+	fmt.Println("SYMBOL: ", res.Symbol)
+	fmt.Println("VOTES: ", res.Votes)
+	fmt.Println("CREATED AT: ", res.CreatedAT)
+	fmt.Println("UPDATED AT: ", res.UpdatedAT)
+	misc.PulaLinha()
 
 	return &pb.ResponseEditCrypto{
 		ResponseCripto: &pb.CryptoCoin{
@@ -158,7 +153,7 @@ func (server *ProtoServer) EditACrypto(ctx context.Context, request *pb.RequestE
 	}, nil
 }
 
-func (server *ProtoServer) DeleteACrypto(ctx context.Context, request *pb.RequestDeleteCrypto) (*pb.ResponseDeleteCrypto, error){
+func (server *ProtoServer) DeleteACrypto(ctx context.Context, request *pb.RequestDeleteCrypto) (*pb.ResponseDeleteCrypto, error) {
 	id := request.GetId()
 
 	err := repo.Delete(id)
@@ -166,50 +161,43 @@ func (server *ProtoServer) DeleteACrypto(ctx context.Context, request *pb.Reques
 	fmt.Println("----------------------------------------")
 	fmt.Print("PARAMETERS RECEIVED BY THE REQUEST \n\n")
 	fmt.Println("ID: ", id)
-	if err != nil{
+	if err != nil {
 		fmt.Println("FAILED TO DELETE A CRYPTO! CHECK THE ID PROVIDED")
-	}else{
+	} else {
 		fmt.Println("CRYPTO DELETED SUCCESSFULLY")
 	}
 
 	return &pb.ResponseDeleteCrypto{}, nil
 }
 
-func (server *ProtoServer) ListAllCryptos(ctx context.Context, request *pb.RequestListAllCryptos) (*pb.ResponseListAllCryptos, error){
-	
+func (server *ProtoServer) ListAllCryptosOrderedByVoteDesc(ctx context.Context, request *pb.RequestListAllCryptos) (*pb.ResponseListAllCryptos, error) {
+
 	res, err := repo.ReadAll()
 
 	fmt.Println("----------------------------------------")
 	fmt.Println("")
-	if err != nil{
+	if err != nil {
 		return &pb.ResponseListAllCryptos{}, errors.New("FAILED TO LIST CRYPTOS")
 	}
 
-	
-	lista := []*pb.CryptoCoin{}
+	list := []*pb.CryptoCoin{}
 
-	newobj := &pb.CryptoCoin{}
-
-	//get the data saved on DB and move it to a Proto List	
-	for _, element := range(res){
+	//get the data saved on DB and move it to a Proto List
+	for _, element := range res {
+		newobj := &pb.CryptoCoin{}
 		newobj.Id = element.Id
 		newobj.Name = element.Name
-		newobj.Symbol =element.Symbol
+		newobj.Symbol = element.Symbol
 		newobj.Votes = int32(element.Votes)
 		newobj.Createdat = element.CreatedAT
 		newobj.Updateat = element.CreatedAT
-		lista = append(lista, newobj)
-		fmt.Println(newobj.Name)
-		fmt.Println("\nlist: ", lista[0])
-		misc.PulaLinha()
+		list = append(list, newobj)
 	}
 
-	fmt.Println("final list: ", lista)
-
-	//Print the Crypto Llist
-	/*fmt.Println("CRYPTO LIST")
+	//Print the Crypto List
+	fmt.Println("CRYPTO LIST")
 	misc.PulaLinha()
-	for _, element := range(list){
+	for _, element := range list {
 		fmt.Println("NAME: ", element.Name)
 		fmt.Println("SYMBOL: ", element.Symbol)
 		fmt.Println("VOTES: ", element.Votes)
@@ -217,13 +205,60 @@ func (server *ProtoServer) ListAllCryptos(ctx context.Context, request *pb.Reque
 		fmt.Println("UPDATED AT: ", element.Updateat)
 		misc.PulaLinha()
 	}
-	*/
-	sort.Slice(lista, func(i, j int) bool{
-		return lista[i].Votes > lista[j].Votes
+
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].Votes > list[j].Votes
 	})
 
 	return &pb.ResponseListAllCryptos{
-		ResponseCripto: lista,
+		ResponseCripto: list,
+	}, nil
+}
+
+func (server *ProtoServer) ListAllCryptosOrderedByVoteAsc(ctx context.Context, request *pb.RequestListAllCryptos) (*pb.ResponseListAllCryptos, error) {
+
+	res, err := repo.ReadAll()
+
+	fmt.Println("----------------------------------------")
+	fmt.Println("")
+	if err != nil {
+		return &pb.ResponseListAllCryptos{}, errors.New("FAILED TO LIST CRYPTOS")
+	}
+
+	list := []*pb.CryptoCoin{}
+
+	//get the data saved on DB and move it to a Proto List
+	for _, element := range res {
+		newobj := &pb.CryptoCoin{}
+		newobj.Id = element.Id
+		newobj.Name = element.Name
+		newobj.Symbol = element.Symbol
+		newobj.Votes = int32(element.Votes)
+		newobj.Createdat = element.CreatedAT
+		newobj.Updateat = element.CreatedAT
+		list = append(list, newobj)
+	}
+
+	fmt.Println("final list: ", list)
+
+	//Print the Crypto Llist
+	fmt.Println("CRYPTO LIST")
+	misc.PulaLinha()
+	for _, element := range list {
+		fmt.Println("NAME: ", element.Name)
+		fmt.Println("SYMBOL: ", element.Symbol)
+		fmt.Println("VOTES: ", element.Votes)
+		fmt.Println("CREATED AT: ", element.Createdat)
+		fmt.Println("UPDATED AT: ", element.Updateat)
+		misc.PulaLinha()
+	}
+
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].Votes < list[j].Votes
+	})
+
+	return &pb.ResponseListAllCryptos{
+		ResponseCripto: list,
 	}, nil
 }
 
