@@ -70,29 +70,28 @@ func ReadAll(sortParam string, ascending bool) (obj []m.CryptoCurrency, err erro
 	var cur *mongo.Cursor
 	findOptions := options.Find()
 
-	if sortParam == "" || (sortParam != "id" && sortParam != "name" && sortParam != "symbol" && sortParam != "votes" && sortParam != "createdat" && sortParam != "updatedat") {
+	switch sortParam{
+	case "id", "name", "symbol", "votes", "createdat", "updatedat": 
+		if ascending { //If ascending = true, the return will be the default.
+			findOptions.SetSort(bson.M{sortParam: 1})
+			cur, err = collection.Find(context.Background(), bson.M{}, findOptions)
+			if err != nil {
+				return obj, err
+			}
+		} else { //Sort by `sortParam` field descending (higher value first)
+			findOptions.SetSort(bson.M{sortParam: -1})
+			cur, err = collection.Find(context.Background(), bson.M{}, findOptions)
+			if err != nil {
+				return obj, err
+			}
+		}
+	default: 
 		//Return a list on default order, wich is ordered by name asc
 		sortParam = "name"
 		findOptions.SetSort(bson.M{sortParam: 1})
 		cur, err = collection.Find(context.Background(), bson.M{}, findOptions)
 		if err != nil {
 			return obj, err
-		}
-	} else { //Customizing the list order
-		if sortParam != "" { //If there is a parameter, the order will be by the param received (name, dt, votes, etc).
-			if ascending { //If ascending = true, the return will be the default.
-				findOptions.SetSort(bson.M{sortParam: 1})
-				cur, err = collection.Find(context.Background(), bson.M{}, findOptions)
-				if err != nil {
-					return obj, err
-				}
-			} else { //Sort by `sortParam` field descending (higher value first)
-				findOptions.SetSort(bson.M{sortParam: -1})
-				cur, err = collection.Find(context.Background(), bson.M{}, findOptions)
-				if err != nil {
-					return obj, err
-				}
-			}
 		}
 	}
 
@@ -127,6 +126,7 @@ func Update(mc m.CryptoCurrency) error {
 	}
 
 	collection := client.Database("desafiotecnico").Collection("moedacripto")
+
 	_, err = collection.UpdateOne(context.Background(), filter, update)
 
 	if err != nil {

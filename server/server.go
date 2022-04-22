@@ -117,6 +117,7 @@ func (server *CryptoServer) Edit(ctx context.Context, request *pb.EditCryptoRequ
 		return &pb.Cryptocurrency{}, errors.New("INVALID SYMBOL, ONLY 3 OR 4 CHARACTERS ALLOWED")
 	}
 
+	//check if id is on DB
 	res, err := repo.Read(id)
 
 	if err != nil {
@@ -181,7 +182,7 @@ func (server *CryptoServer) Delete(ctx context.Context, request *pb.DeleteCrypto
 
 	if err != nil {
 		fmt.Println("FAILED TO DELETE CRYPTO: INVALID ID")
-		return &pb.EmptyResponse{}, nil
+		return &pb.EmptyResponse{}, errors.New("FAILED TO DELETE A CRYPTO: INVALID ID")
 	}
 	//delete from DB
 	err = repo.Delete(id)
@@ -210,9 +211,19 @@ func (server *CryptoServer) Find(ctx context.Context, request *pb.FindRequest) (
 
 	cryptoFound, err := repo.Read(id)
 	if err != nil {
-		fmt.Println("FAILED TO FIND CRYPTO: ", err)
-		return &pb.Cryptocurrency{}, err
+		fmt.Println("FAILED TO DELETE CRYPTO: INVALID ID")
+		return &pb.Cryptocurrency{}, errors.New("FAILED TO DELETE A CRYPTO: INVALID ID")
 	}
+
+	//Print the new Crypto
+	fmt.Print("CRYPTO FOUND!")
+	misc.SkipLine()
+	fmt.Println("NAME      : ", cryptoFound.Name)
+	fmt.Println("SYMBOL    : ", cryptoFound.Symbol)
+	fmt.Println("VOTES     : ", cryptoFound.Votes)
+	fmt.Println("CREATED AT: ", cryptoFound.CreatedAT)
+	fmt.Println("UPDATED AT: ", cryptoFound.UpdatedAT)
+	
 
 	return &pb.Cryptocurrency{
 		Id:        cryptoFound.Id,
@@ -383,7 +394,8 @@ func (server *CryptoServer) Subscribe(request *pb.SubscriptionRequest, stream pb
 				Updateat:  cryptoFound.UpdatedAT,
 			})
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("ERRO: ",err)
+				keepActive = false
 			}
 		}
 	}
