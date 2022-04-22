@@ -40,7 +40,7 @@ var pbMockedCryptoEmpty = &pb.Cryptocurrency{
 	Symbol:    "",
 	Votes:     0,
 	Createdat: "",
-	Updateat:  "",
+	Updatedat: "",
 }
 
 var pbMockedEditCrypto = &pb.EditCryptoRequest{
@@ -78,7 +78,7 @@ func TestCreate(t *testing.T) {
 	//values gerenated inside Create method from server
 	require.NotEmpty(t, result.Id)
 	require.NotEmpty(t, result.Createdat)
-	require.Empty(t, result.Updateat)
+	require.Empty(t, result.Updatedat)
 
 	//fail case
 	result, err = server.Create(ctx, &pb.NewCryptoRequest{
@@ -108,7 +108,7 @@ func TestEdit(t *testing.T) {
 	require.Equal(t, pbMockedEditCrypto.Symbol, result.Symbol)
 	require.Equal(t, int32(0), result.Votes)
 	require.Equal(t, "", result.Createdat)
-	require.Equal(t, "", result.Updateat)
+	require.Equal(t, "", result.Updatedat)
 
 	defer cancel()
 }

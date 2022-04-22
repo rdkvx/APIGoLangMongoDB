@@ -106,7 +106,7 @@ type Cryptocurrency struct {
 	Symbol    string `protobuf:"bytes,3,opt,name=symbol,proto3" json:"symbol,omitempty"`
 	Votes     int32  `protobuf:"varint,4,opt,name=votes,proto3" json:"votes,omitempty"`
 	Createdat string `protobuf:"bytes,5,opt,name=createdat,proto3" json:"createdat,omitempty"`
-	Updateat  string `protobuf:"bytes,6,opt,name=updateat,proto3" json:"updateat,omitempty"`
+	Updatedat  string `protobuf:"bytes,6,opt,name=Updatedat,proto3" json:"Updatedat,omitempty"`
 }
 
 func (x *Cryptocurrency) Reset() {
@@ -178,7 +178,7 @@ func (x *Cryptocurrency) GetCreatedat() string {
 
 func (x *Cryptocurrency) GetUpdateat() string {
 	if x != nil {
-		return x.Updateat
+		return x.Updatedat
 	}
 	return ""
 }

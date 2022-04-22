@@ -4,10 +4,10 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 
 //models to be used exclusively on mongoDB.
 type DbEvent struct {
-	DocumentKey   documentKey `bson:"documentKey"`
-	OperationType string      `bson:"operationType"`
+	DocumentKey   documentKey `json:"documentKey" bson:"documentKey"`
+	OperationType string      `json:"operationType" bson:"operationType"`
 }
 
 type documentKey struct {
-	ID primitive.ObjectID `bson:"_id"`
+	ID primitive.ObjectID `json:"_id" bson:"_id"`
 }

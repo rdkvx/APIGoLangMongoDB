@@ -31,33 +31,6 @@ type CryptoServer struct {
 
 var observer chan string
 
-func main() {
-	lis, err := net.Listen(tipo, port)
-	if err != nil {
-		fmt.Println("FAILED TO LISTEN ON PORT: ", port, "ERROR: ", err)
-	}
-
-	observer = make(chan string)
-
-	client, ctx, cancel, err := database.Connect()
-	if err != nil {
-		fmt.Println("ERROR TRYING TO CONNECT AT DB: ", err)
-	}
-
-	collection := client.Database(database.DB).Collection(database.COLLECTION)
-
-	s := grpc.NewServer()
-	pb.RegisterCryptoServiceServer(s, &CryptoServer{conn: collection})
-	misc.Clear()
-	fmt.Println("SERVER LISTENING AT ", lis.Addr())
-	misc.SkipLine()
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("FAILED TO SERVE: %v", err)
-	}
-
-	database.Close(client, ctx, cancel)
-}
-
 func (server *CryptoServer) Create(ctx context.Context, request *pb.NewCryptoRequest) (*pb.Cryptocurrency, error) {
 	//Request parameters
 	id := uuid.NewString()
@@ -119,7 +92,7 @@ func (server *CryptoServer) Create(ctx context.Context, request *pb.NewCryptoReq
 		Symbol:    newCrypto.Symbol,
 		Votes:     int32(newCrypto.Votes),
 		Createdat: newCrypto.CreatedAT,
-		Updateat:  newCrypto.UpdatedAT,
+		Updatedat: newCrypto.UpdatedAT,
 	}, nil
 }
 
@@ -191,7 +164,7 @@ func (server *CryptoServer) Edit(ctx context.Context, request *pb.EditCryptoRequ
 			Symbol:    res.Symbol,
 			Votes:     int32(res.Votes),
 			Createdat: res.CreatedAT,
-			Updateat:  res.UpdatedAT,
+			Updatedat: res.UpdatedAT,
 		}, nil
 	}
 
@@ -201,7 +174,7 @@ func (server *CryptoServer) Edit(ctx context.Context, request *pb.EditCryptoRequ
 		Symbol:    request.Symbol,
 		Votes:     0,
 		Createdat: "",
-		Updateat:  "",
+		Updatedat: "",
 	}, nil
 }
 
@@ -277,7 +250,7 @@ func (server *CryptoServer) Find(ctx context.Context, request *pb.FindRequest) (
 			Symbol:    cryptoFound.Symbol,
 			Votes:     int32(cryptoFound.Votes),
 			Createdat: cryptoFound.CreatedAT,
-			Updateat:  cryptoFound.UpdatedAT,
+			Updatedat: cryptoFound.UpdatedAT,
 		}, nil
 	}
 
@@ -287,7 +260,7 @@ func (server *CryptoServer) Find(ctx context.Context, request *pb.FindRequest) (
 		Symbol:    "",
 		Votes:     int32(0),
 		Createdat: "",
-		Updateat:  "",
+		Updatedat: "",
 	}, nil
 }
 
@@ -330,7 +303,7 @@ func (server *CryptoServer) List(ctx context.Context, request *pb.ListCryptosReq
 				Symbol:    element.Symbol,
 				Votes:     int32(element.Votes),
 				Createdat: element.CreatedAT,
-				Updateat:  element.CreatedAT,
+				Updatedat: element.UpdatedAT,
 			}
 			cryptoPbList = append(cryptoPbList, newobj)
 			misc.SkipLine()
@@ -461,7 +434,7 @@ func (server *CryptoServer) Subscribe(request *pb.SubscriptionRequest, stream pb
 				Symbol:    cryptoFound.Symbol,
 				Votes:     int32(cryptoFound.Votes),
 				Createdat: cryptoFound.CreatedAT,
-				Updateat:  cryptoFound.UpdatedAT,
+				Updatedat: cryptoFound.UpdatedAT,
 			})
 			if err != nil {
 				fmt.Println("ERRO: ", err)
@@ -471,4 +444,31 @@ func (server *CryptoServer) Subscribe(request *pb.SubscriptionRequest, stream pb
 	}
 
 	return nil
+}
+
+func main() {
+	lis, err := net.Listen(tipo, port)
+	if err != nil {
+		fmt.Println("FAILED TO LISTEN ON PORT: ", port, "ERROR: ", err)
+	}
+
+	observer = make(chan string)
+
+	client, ctx, cancel, err := database.Connect()
+	if err != nil {
+		fmt.Println("ERROR TRYING TO CONNECT AT DB: ", err)
+	}
+
+	collection := client.Database(database.DB).Collection(database.COLLECTION)
+
+	s := grpc.NewServer()
+	pb.RegisterCryptoServiceServer(s, &CryptoServer{conn: collection})
+	misc.Clear()
+	fmt.Println("SERVER LISTENING AT ", lis.Addr())
+	misc.SkipLine()
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("FAILED TO SERVE: %v", err)
+	}
+
+	database.Close(client, ctx, cancel)
 }

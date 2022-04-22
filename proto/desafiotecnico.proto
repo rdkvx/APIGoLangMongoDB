@@ -25,7 +25,7 @@ message Cryptocurrency {
     string symbol = 3;
     int32 votes = 4;
     string createdat = 5;
-    string updateat = 6;
+    string Updatedat = 6;
 }
 
 message ListCryptosRequest {
