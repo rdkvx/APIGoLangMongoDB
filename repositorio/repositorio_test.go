@@ -1,120 +1,52 @@
 package repositorio
 
 import (
-	m "DesafioTecnico/server/model"
-	"reflect"
+	"DesafioTecnico/mock"
+	"DesafioTecnico/server/model"
 	"testing"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/require"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
+var mockedCrypto = &model.CryptoCurrency{
+	Id:        uuid.NewString(),
+	Name:      "mocked crypto",
+	Symbol:    "mkd",
+	Votes:     35,
+	CreatedAT: time.Now().Format("02/01/2006 15:04:45"),
+	UpdatedAT: "",
+}
+
+var mockedCryptoEmpty = &model.CryptoCurrency{
+	Id:        "",
+	Name:      "",
+	Symbol:    "",
+	Votes:     0,
+	CreatedAT: "",
+	UpdatedAT: "",
+}
+
 func TestCreate(t *testing.T) {
-	type args struct {
-		mc m.CryptoCurrency
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := Create(tt.args.mc); (err != nil) != tt.wantErr {
-				t.Errorf("Create() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+	mock := mock.Mock{}
+
+	err := Create(&mock, *mockedCrypto)
+	require.Nil(t, err)
 }
 
 func TestRead(t *testing.T) {
-	type args struct {
-		id string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantMc  m.CryptoCurrency
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotMc, err := Read(tt.args.id)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Read() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(gotMc, tt.wantMc) {
-				t.Errorf("Read() = %v, want %v", gotMc, tt.wantMc)
-			}
-		})
-	}
+	mock := mock.Mock{}
+	mock.SingleResult = mongo.SingleResult{}
+
+	result, err := Read(&mock, "321646464")
+	require.NotNil(t, err)
+	require.NotNil(t, result)
 }
 
-func TestReadAll(t *testing.T) {
-	type args struct {
-		sortParam string
-		ascending bool
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantObj []m.CryptoCurrency
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotObj, err := ReadAll(tt.args.sortParam, tt.args.ascending)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ReadAll() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(gotObj, tt.wantObj) {
-				t.Errorf("ReadAll() = %v, want %v", gotObj, tt.wantObj)
-			}
-		})
-	}
-}
+func TestReadAll(t *testing.T) {}
 
-func TestUpdate(t *testing.T) {
-	type args struct {
-		mc m.CryptoCurrency
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := Update(tt.args.mc); (err != nil) != tt.wantErr {
-				t.Errorf("Update() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
+func TestUpdate(t *testing.T) {}
 
-func TestDelete(t *testing.T) {
-	type args struct {
-		id string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := Delete(tt.args.id); (err != nil) != tt.wantErr {
-				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
+func TestDelete(t *testing.T) {}
