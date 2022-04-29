@@ -128,7 +128,7 @@ func (server *CryptoServer) Edit(ctx context.Context, request *pb.EditCryptoRequ
 
 		if err != nil {
 			fmt.Println("FAILED TO UPDATE CRYPTO: INVALID ID")
-			return &pb.Cryptocurrency{}, nil
+			return &pb.Cryptocurrency{}, err
 		} else {
 			res.Name = name
 			res.Symbol = symbol
@@ -415,13 +415,13 @@ func (server *CryptoServer) Downvote(ctx context.Context, request *pb.VoteReques
 
 //Streaming watch method
 func (server *CryptoServer) Subscribe(request *pb.SubscriptionRequest, stream pb.CryptoService_SubscribeServer) error {
-	keepActive := true
+	
 
 	//keep the stream running
-	for keepActive {
+	for  {
 		cryptoUpdatedId := <-observer //the ID is now beeing watched by the channel observer
 
-		if cryptoUpdatedId == request.Id {
+		//if cryptoUpdatedId == request.Id {
 			cryptoFound, err := repo.Read(server.conn, cryptoUpdatedId)
 			if err != nil {
 				fmt.Println("UNABLE TO STREAM CHANGES IN CRYPTO FROM ID: ", cryptoUpdatedId)
@@ -438,12 +438,10 @@ func (server *CryptoServer) Subscribe(request *pb.SubscriptionRequest, stream pb
 			})
 			if err != nil {
 				fmt.Println("ERRO: ", err)
-				keepActive = false
+				return nil
 			}
-		}
+		//}
 	}
-
-	return nil
 }
 
 func main() {

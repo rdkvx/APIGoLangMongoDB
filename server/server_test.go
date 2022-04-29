@@ -20,7 +20,7 @@ var mockedCrypto = &model.CryptoCurrency{
 	UpdatedAT: "",
 }
 
-var mockedCryptoEmpty = &model.CryptoCurrency{
+/* var mockedCryptoEmpty = &model.CryptoCurrency{
 	Id:        "",
 	Name:      "",
 	Symbol:    "",
@@ -32,7 +32,7 @@ var mockedCryptoEmpty = &model.CryptoCurrency{
 var pbMockedCrypto = &pb.NewCryptoRequest{
 	Name:   "",
 	Symbol: mockedCrypto.Symbol,
-}
+} */
 
 var pbMockedCryptoEmpty = &pb.Cryptocurrency{
 	Id:        "",
