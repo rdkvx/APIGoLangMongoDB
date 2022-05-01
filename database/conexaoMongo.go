@@ -40,16 +40,3 @@ func Connect() (*mongo.Client, context.Context, context.CancelFunc, error) {
 
 	return client, ctx, cancel, err
 }
-
-func GetCollection() (*mongo.Collection, error) {
-	client, ctx, cancel, err := Connect()
-	if err != nil {
-		fmt.Println("ERROR TRYING TO CONNECT AT DB: ", err)
-	}
-
-	collection := client.Database(DB).Collection(COLLECTION)
-
-	defer Close(client, ctx, cancel)
-
-	return collection, nil
-}
