@@ -1,0 +1,5 @@
+{
+  "id": "adfe8a40-b9e7-4cf4-a3c8-21fd2242c70a", //cryptos ID
+  "name": "Ethereum", //cryptos name
+  "symbol": "ETH" // cryptos symbol
+}
