@@ -415,13 +415,12 @@ func (server *CryptoServer) Downvote(ctx context.Context, request *pb.VoteReques
 
 //Streaming watch method
 func (server *CryptoServer) Subscribe(request *pb.SubscriptionRequest, stream pb.CryptoService_SubscribeServer) error {
-	
 
 	//keep the stream running
-	for  {
+	for {
 		cryptoUpdatedId := <-observer //the ID is now beeing watched by the channel observer
 
-		//if cryptoUpdatedId == request.Id {
+		if cryptoUpdatedId == request.Id {
 			cryptoFound, err := repo.Read(server.conn, cryptoUpdatedId)
 			if err != nil {
 				fmt.Println("UNABLE TO STREAM CHANGES IN CRYPTO FROM ID: ", cryptoUpdatedId)
@@ -440,7 +439,7 @@ func (server *CryptoServer) Subscribe(request *pb.SubscriptionRequest, stream pb
 				fmt.Println("ERRO: ", err)
 				return nil
 			}
-		//}
+		}
 	}
 }
 
@@ -464,6 +463,10 @@ func main() {
 	misc.Clear()
 	fmt.Println("SERVER LISTENING AT ", lis.Addr())
 	misc.SkipLine()
+
+	//if this is the first time running the server, this script will create 3 cryptos on DB
+	repo.CreateInitialData(collection)
+
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("FAILED TO SERVE: %v", err)
 	}
