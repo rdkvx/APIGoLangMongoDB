@@ -14,7 +14,7 @@ import (
 var mockedCrypto = &model.CryptoCurrency{
 	Id:        uuid.NewString(),
 	Name:      "mocked crypto",
-	Symbol:    "mkd",
+	Symbol:    "mkdi",
 	Votes:     35,
 	CreatedAT: time.Now().Format("02/01/2006 15:04:45"),
 	UpdatedAT: "",
