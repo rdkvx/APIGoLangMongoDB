@@ -1,4 +1,4 @@
-package main
+package controller
 
 import (
 	pb "DesafioTecnico/proto"
@@ -19,20 +19,6 @@ var mockedCrypto = &model.CryptoCurrency{
 	CreatedAT: time.Now().Format("02/01/2006 15:04:45"),
 	UpdatedAT: "",
 }
-
-/* var mockedCryptoEmpty = &model.CryptoCurrency{
-	Id:        "",
-	Name:      "",
-	Symbol:    "",
-	Votes:     0,
-	CreatedAT: "",
-	UpdatedAT: "",
-}
-
-var pbMockedCrypto = &pb.NewCryptoRequest{
-	Name:   "",
-	Symbol: mockedCrypto.Symbol,
-} */
 
 var pbMockedCryptoEmpty = &pb.Cryptocurrency{
 	Id:        "",
@@ -72,9 +58,11 @@ func TestCreate(t *testing.T) {
 	})
 	require.Nil(t, err)
 	require.NotNil(t, result)
+	
 	//Sent values
 	require.Equal(t, mockedCrypto.Name, result.Name)
 	require.Equal(t, mockedCrypto.Symbol, result.Symbol)
+
 	//values gerenated inside Create method from server
 	require.NotEmpty(t, result.Id)
 	require.NotEmpty(t, result.Createdat)
