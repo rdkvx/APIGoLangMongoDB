@@ -1,0 +1,46 @@
+payload to send on request for each method
+
+create
+{
+    "name":"Klever", //cryptos name
+    "symbol":"klv" //cryptos symbol
+}
+
+delete
+{
+  "id": "d054da53-25e2-41c9-b838-c613d47639a9" //cryptos id
+}
+
+downvote
+{
+  "id": "adfe8a40-b9e7-4cf4-a3c8-21fd2242c70a" //cryptos id that will be down voted
+}
+
+upvote
+{
+    "id": "065680e2-f4e0-4727-8224-8d1d12c5bc6b" //cryptos id to be up voted
+}
+
+Edit
+{
+  "id": "adfe8a40-b9e7-4cf4-a3c8-21fd2242c70a", //cryptos ID
+  "name": "Ethereum", //cryptos name
+  "symbol": "ETH" // cryptos symbol
+}
+
+find
+{
+    "id": "19448141-d1a6-4108-a65a-7ab120076c85" //cryptos id
+}
+
+list
+{
+    "sortparam": "createdat", //column of crypto that can be id, name, symbol, votes, createdat, updatedat
+    "ascending": false //bool that will define the order of data display, true = ascending, false = descending
+}
+
+subscribe
+{
+    "id": "adfe8a40-b9e7-4cf4-a3c8-21fd2242c70a" //id that will be monitorized on stream
+}
+

@@ -1,4 +1,0 @@
-{
-  "sortparam": "createdat", //column of crypto that can be id, name, symbol, votes, createdat, updatedat
-  "ascending": false //bool that will define the order of data display, true = ascending, false = descending
-}

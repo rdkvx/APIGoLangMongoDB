@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"DesafioTecnico/client/misc"
 	"DesafioTecnico/server/model"
 	"DesafioTecnico/services"
+	"DesafioTecnico/utils"
 	"context"
 	"errors"
 	"fmt"
@@ -34,7 +34,7 @@ func (server *CryptoServer) Create(ctx context.Context, request *pb.NewCryptoReq
 	fmt.Print("PARAMETERS RECEIVED BY THE REQUEST \n\n")
 	fmt.Println("Nam   : ", name)
 	fmt.Print("Symbol: ", symbol)
-	misc.SkipLine()
+	utils.SkipLine()
 
 	//Check if the name and symbols are valid.
 	if len(name) <= 3 || name == "" {
@@ -74,7 +74,7 @@ func (server *CryptoServer) Create(ctx context.Context, request *pb.NewCryptoReq
 	fmt.Println("VOTES     : ", newCrypto.Votes)
 	fmt.Println("CREATED AT: ", newCrypto.CreatedAT)
 	fmt.Println("UPDATED AT: ", newCrypto.UpdatedAT)
-	misc.SkipLine()
+	utils.SkipLine()
 
 	//If everythings gone right, return the new crypto object
 	return &pb.Cryptocurrency{
@@ -100,7 +100,7 @@ func (server *CryptoServer) Edit(ctx context.Context, request *pb.EditCryptoRequ
 	fmt.Println("Id    : ", id)
 	fmt.Println("Name  : ", name)
 	fmt.Print("Symbol: : ", symbol)
-	misc.SkipLine()
+	utils.SkipLine()
 
 	//Check if the name and symbols are valid.
 	if len(name) < 3 || name == "" {
@@ -136,13 +136,13 @@ func (server *CryptoServer) Edit(ctx context.Context, request *pb.EditCryptoRequ
 
 		//Print the new Crypto
 		fmt.Println("CRYPTO UPDATED SUCCESSFULLY")
-		misc.SkipLine()
+		utils.SkipLine()
 		fmt.Println("NAME      : ", res.Name)
 		fmt.Println("SYMBOL    : ", res.Symbol)
 		fmt.Println("VOTES     : ", res.Votes)
 		fmt.Println("CREATED AT: ", res.CreatedAT)
 		fmt.Println("UPDATED AT: ", res.UpdatedAT)
-		misc.SkipLine()
+		utils.SkipLine()
 
 		//A Observer from datastream, if the ID that you defined on subscribe method
 		//is the same beeing updated, the Observer will send a alert to the stream.
@@ -172,11 +172,11 @@ func (server *CryptoServer) Edit(ctx context.Context, request *pb.EditCryptoRequ
 func (server *CryptoServer) Delete(ctx context.Context, request *pb.DeleteCryptoRequest) (*pb.EmptyResponse, error) {
 	id := request.GetId()
 
-	misc.SkipLine()
+	utils.SkipLine()
 	fmt.Println("----------------------------------------")
 	fmt.Print("PARAMETERS RECEIVED BY THE REQUEST \n\n")
 	fmt.Print("ID: ", id)
-	misc.SkipLine()
+	utils.SkipLine()
 
 	//check if ID is empty
 	if id == "" {
@@ -208,11 +208,11 @@ func (server *CryptoServer) Delete(ctx context.Context, request *pb.DeleteCrypto
 func (server *CryptoServer) Find(ctx context.Context, request *pb.FindRequest) (*pb.Cryptocurrency, error) {
 	id := request.GetId()
 
-	misc.SkipLine()
+	utils.SkipLine()
 	fmt.Println("----------------------------------------")
 	fmt.Print("PARAMETERS RECEIVED BY THE REQUEST \n\n")
 	fmt.Print("ID: ", id)
-	misc.SkipLine()
+	utils.SkipLine()
 
 	if id == "" {
 		fmt.Println("FAILED TO FIND CRYPTO: EMPTY ID")
@@ -228,7 +228,7 @@ func (server *CryptoServer) Find(ctx context.Context, request *pb.FindRequest) (
 
 		//Print the new Crypto
 		fmt.Print("CRYPTO FOUND!")
-		misc.SkipLine()
+		utils.SkipLine()
 		fmt.Println("NAME      : ", cryptoFound.Name)
 		fmt.Println("SYMBOL    : ", cryptoFound.Symbol)
 		fmt.Println("VOTES     : ", cryptoFound.Votes)
@@ -259,12 +259,12 @@ func (server *CryptoServer) List(ctx context.Context, request *pb.ListCryptosReq
 	sortParam := request.GetSortparam()
 	ascending := request.GetAscending()
 
-	misc.SkipLine()
+	utils.SkipLine()
 	fmt.Println("----------------------------------------")
 	fmt.Print("PARAMETERS RECEIVED BY THE REQUEST \n\n")
 	fmt.Println("SORT PARAMETERS: ", sortParam)
 	fmt.Print("ASCENDING        : ", ascending)
-	misc.SkipLine()
+	utils.SkipLine()
 
 	if server.Coll != nil {
 		//get a collection with the parameters sended
@@ -297,7 +297,7 @@ func (server *CryptoServer) List(ctx context.Context, request *pb.ListCryptosReq
 				Updatedat: element.UpdatedAT,
 			}
 			cryptoPbList = append(cryptoPbList, newobj)
-			misc.SkipLine()
+			utils.SkipLine()
 			fmt.Println("ID         : ", element.Id)
 			fmt.Println("NAME       : ", element.Name)
 			fmt.Println("SYMBOL     : ", element.Symbol)
@@ -305,7 +305,7 @@ func (server *CryptoServer) List(ctx context.Context, request *pb.ListCryptosReq
 			fmt.Println("CREATED AT : ", element.CreatedAT)
 			fmt.Println("UPDATED AT : ", element.UpdatedAT)
 		}
-		misc.SkipLine()
+		utils.SkipLine()
 
 		//return the list
 		return &pb.ListCryptosResponse{
@@ -319,11 +319,11 @@ func (server *CryptoServer) List(ctx context.Context, request *pb.ListCryptosReq
 func (server *CryptoServer) Upvote(ctx context.Context, request *pb.VoteRequest) (*pb.EmptyResponse, error) {
 	id := request.GetId()
 
-	misc.SkipLine()
+	utils.SkipLine()
 	fmt.Println("----------------------------------------")
 	fmt.Print("PARAMETERS RECEIVED BY THE REQUEST \n\n")
 	fmt.Print("ID: ", id)
-	misc.SkipLine()
+	utils.SkipLine()
 
 	if id == "" {
 		fmt.Println("FAILED TO VOTE: EMPTY ID")
@@ -362,11 +362,11 @@ func (server *CryptoServer) Upvote(ctx context.Context, request *pb.VoteRequest)
 func (server *CryptoServer) Downvote(ctx context.Context, request *pb.VoteRequest) (*pb.EmptyResponse, error) {
 	id := request.GetId()
 
-	misc.SkipLine()
+	utils.SkipLine()
 	fmt.Println("----------------------------------------")
 	fmt.Print("PARAMETERS RECEIVED BY THE REQUEST \n\n")
 	fmt.Print("ID: ", id)
-	misc.SkipLine()
+	utils.SkipLine()
 
 	if id == "" {
 		fmt.Println("FAILED TO VOTE: EMPTY ID")

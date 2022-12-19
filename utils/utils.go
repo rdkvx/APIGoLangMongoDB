@@ -1,8 +1,7 @@
-package misc
+package utils
 
 import (
 	"fmt"
-	//"DesafioTecnico/server/model"
 )
 
 func Clear() {
